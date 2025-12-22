@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Əmirbəyova Nərminə | Tarix Sınağı</title>
+    <title>Əmirbəyova Nərminə | Tarix Sınaq Portalı</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,30 +15,49 @@
     </div>
 
     <div id="login-screen">
-        <input type="text" id="student-name" placeholder="Ad və Soyadınızı daxil edin">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <p>"Uğurlar uşaqlar, sualları diqqətlə oxuyun!"</p>
+        </div>
+        <input type="text" id="student-name" placeholder="Ad və Soyadınızı daxil edin" required>
         <button onclick="startQuiz()">Sınağa Başla</button>
     </div>
 
     <div id="quiz-screen" class="hidden">
         <div id="timer">Qalan Vaxt: 15:00</div>
+        
         <div class="question">
             <p>1. Azərbaycan Xalq Cümhuriyyəti neçənci ildə yaradılmışdır?</p>
             <div class="options">
+                <label><input type="radio" name="q1" value="0"> 1917</label>
                 <label><input type="radio" name="q1" value="10"> 1918</label>
                 <label><input type="radio" name="q1" value="0"> 1920</label>
             </div>
         </div>
+
+        <div class="question">
+            <p>2. "Gülüstan" müqaviləsi neçənci ildə imzalanıb?</p>
+            <div class="options">
+                <label><input type="radio" name="q2" value="10"> 1813</label>
+                <label><input type="radio" name="q2" value="0"> 1828</label>
+                <label><input type="radio" name="q2" value="0"> 1805</label>
+            </div>
+        </div>
+
         <button onclick="finishQuiz()">Sınağı Bitir</button>
     </div>
 
     <div id="result-screen" class="hidden">
-        <h2>Sınaq Başa Çatdı!</h2>
-        <p id="final-score"></p>
+        <h2 style="color: #27ae60;">Sınaq Başa Çatdı!</h2>
+        <p id="final-score" style="font-size: 22px; margin: 20px 0;"></p>
+        <p>Nəticəniz Nərminə müəllimənin sisteminə uğurla göndərildi.</p>
+        <p style="color: #7f8c8d; font-size: 14px;">(Səhifəni bağlaya bilərsiniz)</p>
     </div>
 </div>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script src="script.js"></script>
+
 </body>
 </html>
