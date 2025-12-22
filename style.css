@@ -1,16 +1,180 @@
-:root { --primary: #2c3e50; --accent: #e74c3c; --bg: #f4f7f6; }
-body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
-#quiz-container { background: white; max-width: 800px; width: 100%; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-.header { text-align: center; border-bottom: 2px solid var(--primary); margin-bottom: 20px; }
+:root {
+    --primary-color: #1a5f7a; /* Ciddi dəniz mavisi */
+    --accent-color: #c84b31;  /* Diqqət çəkən kərpic rəngi */
+    --bg-color: #f0f2f5;
+    --text-color: #2d3436;
+    --white: #ffffff;
+    --shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+#quiz-container {
+    background: var(--white);
+    max-width: 700px;
+    width: 90%;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Üst hissə zolağı */
+#quiz-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--primary-color), #2ecc71);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.header h1 {
+    font-size: 28px;
+    color: var(--primary-color);
+    margin: 0;
+    letter-spacing: -0.5px;
+}
+
+.header p {
+    color: #636e72;
+    margin-top: 5px;
+    font-size: 15px;
+}
+
+.welcome-msg {
+    background: #e8f1f5;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+    margin-bottom: 25px;
+    font-style: italic;
+}
+
+/* Düymələr */
+button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 25px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 15px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(26, 95, 122, 0.3);
+    filter: brightness(1.1);
+}
+
+.secondary-btn {
+    background: transparent;
+    color: #636e72;
+    border: 1px solid #dfe6e9;
+    margin-top: 10px;
+}
+
+.secondary-btn:hover {
+    background: #f8f9fa;
+    color: var(--primary-color);
+    box-shadow: none;
+}
+
+/* Suallar */
+.question {
+    background: #fdfdfd;
+    padding: 20px;
+    border: 1px solid #f1f1f1;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.question p {
+    font-weight: 600;
+    font-size: 17px;
+    margin-bottom: 15px;
+}
+
+.options label {
+    display: block;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.options label:hover {
+    background: #f0f7ff;
+    border-color: #cbdcf0;
+}
+
+input[type="radio"] {
+    margin-right: 10px;
+    accent-color: var(--primary-color);
+}
+
+/* Admin Cədvəli */
+.table-wrapper {
+    margin-top: 25px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #f8f9fa;
+    padding: 15px;
+    font-size: 14px;
+    color: #636e72;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
 .hidden { display: none; }
-input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-button { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
-.secondary-btn { background: #7f8c8d; margin-top: 5px; }
-.question { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-.options label { display: block; padding: 8px; cursor: pointer; }
-#timer { text-align: right; color: var(--accent); font-weight: bold; margin-bottom: 10px; }
-.table-wrapper { overflow-x: auto; margin-top: 20px; }
-table { width: 100%; border-collapse: collapse; }
-th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-th { background: #eee; }
-.admin-link { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
+
+#timer {
+    display: inline-block;
+    background: #fff0f0;
+    color: var(--accent-color);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
