@@ -1,3 +1,4 @@
+// Firebase Konfiqurasiyası
 const firebaseConfig = {
   apiKey: "AIzaSyDulTEwR08ErC3J9uvjDHGJ1wxqTy91x1I",
   authDomain: "tarix-sinaq-db.firebaseapp.com",
@@ -14,6 +15,7 @@ const database = firebase.database();
 let timeLeft = localStorage.getItem('timeLeft') ? parseInt(localStorage.getItem('timeLeft')) : 900;
 let timerInterval;
 
+// Səhifə yüklənəndə vəziyyəti bərpa et
 window.onload = function() {
     const savedName = localStorage.getItem('studentName');
     const isQuizRunning = localStorage.getItem('isQuizRunning');
@@ -31,17 +33,17 @@ window.onload = function() {
     });
 };
 
-function saveAnswer(questionName, value) {
+function saveAnswer(qName, val) {
     let answers = JSON.parse(localStorage.getItem('savedAnswers')) || {};
-    answers[questionName] = value;
+    answers[qName] = val;
     localStorage.setItem('savedAnswers', JSON.stringify(answers));
 }
 
 function restoreAnswers() {
     let answers = JSON.parse(localStorage.getItem('savedAnswers')) || {};
-    for (let questionName in answers) {
-        let value = answers[questionName];
-        let radio = document.querySelector(`input[name="${questionName}"][value="${value}"]`);
+    for (let qName in answers) {
+        let val = answers[qName];
+        let radio = document.querySelector(`input[name="${qName}"][value="${val}"]`);
         if (radio) radio.checked = true;
     }
 }
@@ -78,48 +80,38 @@ function finishQuiz() {
     clearInterval(timerInterval);
     let correctCount = 0;
     let questions = document.querySelectorAll('.question');
-    let totalQuestions = questions.length;
     let studentAnswers = [];
 
     questions.forEach((qDiv, index) => {
         const qNum = index + 1;
         const selected = qDiv.querySelector(`input[name="q${qNum}"]:checked`);
-        const qText = qDiv.querySelector('p').innerText;
-        
-        // Bu hissədə bal yox, doğruluğu yoxlayırıq (value="10" olanlar düzdür)
         let isCorrect = selected ? (parseInt(selected.value) > 0) : false;
         if (isCorrect) correctCount++;
 
         studentAnswers.push({
-            sual: qText,
+            sual: qDiv.querySelector('p').innerText,
             cavab: selected ? selected.getAttribute('data-text') : "Boş buraxılıb",
             dogrudurmu: isCorrect
         });
     });
 
-    let wrongCount = totalQuestions - correctCount;
     const name = localStorage.getItem('studentName');
-
     database.ref('imtahan_neticeleri').push({
         adSoyad: name,
         duz: correctCount,
-        sehv: wrongCount,
-        cemi: totalQuestions,
+        sehv: questions.length - correctCount,
         tarix: new Date().toLocaleString(),
         detallar: studentAnswers
     }).then(() => {
         localStorage.clear();
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('final-score').innerHTML = `
-            <strong>${name}</strong>,<br> 
-            Düz: <span style="color:green">${correctCount}</span> | 
-            Səhv: <span style="color:red">${wrongCount}</span>
-        `;
+        document.getElementById('final-score').innerHTML = `<strong>${name}</strong>: ${correctCount} Düz, ${questions.length - correctCount} Səhv`;
     });
 }
 
-// ADMIN PANEL
+// --- MÜƏLLİM (ADMIN) FUNKSİYALARI ---
+
 function checkAdmin() {
     if (document.getElementById('admin-password').value === "nermin2025") {
         document.getElementById('admin-login').classList.add('hidden');
@@ -132,36 +124,58 @@ function loadResults() {
     const tbody = document.getElementById('results-body');
     database.ref('imtahan_neticeleri').on('value', (snapshot) => {
         tbody.innerHTML = "";
+        if (!snapshot.exists()) {
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center'>Nəticə yoxdur</td></tr>";
+            return;
+        }
         snapshot.forEach((child) => {
             const val = child.val();
             const key = child.key;
-            tbody.innerHTML += `<tr onclick="showDetails('${key}')" style="cursor:pointer">
-                <td><strong>${val.adSoyad}</strong></td>
+            tbody.innerHTML += `<tr>
+                <td onclick="showDetails('${key}')" style="cursor:pointer"><strong>${val.adSoyad}</strong></td>
                 <td style="color:green">D: ${val.duz}</td>
                 <td style="color:red">S: ${val.sehv}</td>
-                <td>${val.tarix}</td>
+                <td style="font-size:11px">${val.tarix} 
+                    <button onclick="deleteResult('${key}')" style="width:auto; background:#e74c3c; padding:3px 7px; margin-left:5px;">X</button>
+                </td>
             </tr>`;
         });
     });
+}
+
+// Tək bir nəticəni silmək
+function deleteResult(key) {
+    if (confirm("Bu nəticəni silmək istəyirsiniz?")) {
+        database.ref('imtahan_neticeleri/' + key).set(null);
+    }
+}
+
+// Bütün nəticələri təmizləmək
+function clearAllResults() {
+    if (confirm("DİQQƏT: Bütün şagird nəticələri silinəcək! Əminsiniz?")) {
+        database.ref('imtahan_neticeleri').set(null)
+        .then(() => alert("Baza tamamilə təmizləndi."))
+        .catch(err => alert("Xəta: " + err.message));
+    }
 }
 
 function showDetails(key) {
     database.ref('imtahan_neticeleri/' + key).once('value', (snapshot) => {
         const data = snapshot.val();
         document.getElementById('student-details').classList.remove('hidden');
-        document.getElementById('detail-name').innerText = data.adSoyad + " (Nəticə: " + data.duz + " düz)";
-        let listHtml = "";
+        document.getElementById('detail-name').innerText = data.adSoyad + " - Analiz";
+        let html = "";
         data.detallar.forEach(d => {
-            const color = d.dogrudurmu ? "#27ae60" : "#e74c3c";
-            listHtml += `<p style="border-left: 4px solid ${color}; padding: 10px; background: #fff; margin: 5px 0; font-size:14px;">
+            const color = d.dogrudurmu ? "green" : "red";
+            html += `<p style="color:${color}; border-bottom:1px solid #eee; padding:5px;">
                 ${d.dogrudurmu ? '✅' : '❌'} <strong>${d.sual}</strong><br>
-                <span>Şagirdin cavabı: ${d.cavab}</span>
+                <small>Cavab: ${d.cavab}</small>
             </p>`;
         });
-        document.getElementById('detail-list').innerHTML = listHtml;
+        document.getElementById('detail-list').innerHTML = html;
     });
 }
 
 function showLogin() { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('admin-login').classList.remove('hidden'); }
 function hideLogin() { document.getElementById('admin-login').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }
-function logoutAdmin() { localStorage.clear(); location.reload(); }
+function logoutAdmin() { location.reload(); }
