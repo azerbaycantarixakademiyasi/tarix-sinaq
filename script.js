@@ -14,25 +14,50 @@ const database = firebase.database();
 let timeLeft = localStorage.getItem('timeLeft') ? parseInt(localStorage.getItem('timeLeft')) : 900;
 let timerInterval;
 
-// SƏHİFƏ YÜKLƏNƏNDƏ YADDAŞI YOXLAYIR
+// SƏHİFƏ YÜKLƏNƏNDƏ HƏR ŞEYİ BƏRPA ET
 window.onload = function() {
     const savedName = localStorage.getItem('studentName');
     const isQuizRunning = localStorage.getItem('isQuizRunning');
 
     if (isQuizRunning === "true" && savedName) {
         document.getElementById('student-name').value = savedName;
+        restoreAnswers(); // Əvvəlki seçimləri bərpa et
         resumeQuiz();
     }
+
+    // Hər radio düyməsinə klikləyəndə yaddaşa yazma funksiyası qoşuruq
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            saveAnswer(this.name, this.value);
+        });
+    });
 };
+
+// Seçilən variantı yadda saxla
+function saveAnswer(questionName, value) {
+    let answers = JSON.parse(localStorage.getItem('savedAnswers')) || {};
+    answers[questionName] = value;
+    localStorage.setItem('savedAnswers', JSON.stringify(answers));
+}
+
+// Seçilmiş variantları ekrana qaytar
+function restoreAnswers() {
+    let answers = JSON.parse(localStorage.getItem('savedAnswers')) || {};
+    for (let questionName in answers) {
+        let value = answers[questionName];
+        let radio = document.querySelector(`input[name="${questionName}"][value="${value}"]`);
+        if (radio) radio.checked = true;
+    }
+}
 
 function startQuiz() {
     const name = document.getElementById('student-name').value.trim();
     if (name.length < 5) { alert("Ad və Soyad daxil edin!"); return; }
     
-    // Yaddaşa yazırıq
     localStorage.setItem('studentName', name);
     localStorage.setItem('isQuizRunning', "true");
     localStorage.setItem('timeLeft', 900);
+    localStorage.setItem('savedAnswers', JSON.stringify({})); // Yeni sınaq üçün təmizlə
 
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('quiz-screen').classList.remove('hidden');
@@ -50,7 +75,6 @@ function updateTimer() {
     let sec = timeLeft % 60;
     document.getElementById('timer').innerText = `Qalan Vaxt: ${min}:${sec < 10 ? '0' : ''}${sec}`;
     
-    // Hər saniyə vaxtı yaddaşda yeniləyirik
     localStorage.setItem('timeLeft', timeLeft);
 
     if (timeLeft-- <= 0) {
@@ -86,15 +110,14 @@ function finishQuiz() {
         tarix: new Date().toLocaleString(),
         detallar: studentAnswers
     }).then(() => {
-        // İmtahan bitdi, yaddaşı təmizləyirik
-        localStorage.clear();
+        localStorage.clear(); // Hər şeyi təmizləyirik
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
         document.getElementById('final-score').innerText = `${name}, Balınız: ${score}`;
     });
 }
 
-// ADMIN PANEL VƏ DİGƏR FUNKSİYALAR (Köhnə kodlar olduğu kimi qalır)
+// ADMIN PANEL FUNKSİYALARI
 function checkAdmin() {
     if (document.getElementById('admin-password').value === "nermin2025") {
         document.getElementById('admin-login').classList.add('hidden');
@@ -127,9 +150,9 @@ function showDetails(key) {
         let listHtml = "";
         data.detallar.forEach(d => {
             const color = d.dogrudurmu ? "#27ae60" : "#e74c3c";
-            listHtml += `<p style="border-left: 4px solid ${color}; padding: 10px; background: #fff; margin: 5px 0;">
+            listHtml += `<p style="border-left: 4px solid ${color}; padding: 10px; background: #fff; margin: 5px 0; font-size:14px;">
                 ${d.dogrudurmu ? '✅' : '❌'} <strong>${d.sual}</strong><br>
-                <small>Verilən cavab: ${d.cavab}</small>
+                <span>Şagirdin cavabı: ${d.cavab}</span>
             </p>`;
         });
         document.getElementById('detail-list').innerHTML = listHtml;
