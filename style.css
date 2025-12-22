@@ -199,12 +199,21 @@ tr:hover {
 .secondary-btn {
     background: #7f8c8d !important;
 }
-footer {
-    padding: 15px;
-    letter-spacing: 0.5px;
-    line-height: 1.6;
+
+.site-footer {
+    text-align: center;
+    padding: 20px 0;
+    width: 100%;
+    color: #636e72;
+    font-size: 14px;
+    border-top: 1px solid #dfe6e9; /* Zərif bir xətt */
+    margin-top: 40px;
+    background: transparent;
 }
-footer strong {
+
+.site-footer span {
     color: var(--primary-color);
-    border-bottom: 1px solid #ddd;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
