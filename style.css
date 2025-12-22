@@ -1,13 +1,16 @@
 :root { --primary: #2c3e50; --accent: #e74c3c; --bg: #f4f7f6; }
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); display: flex; justify-content: center; padding: 20px; }
-#quiz-container { background: white; max-width: 700px; width: 100%; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-top: 8px solid var(--primary); }
-.header { text-align: center; margin-bottom: 30px; }
-.header h1 { margin-bottom: 5px; color: var(--primary); }
-.header p { color: #7f8c8d; font-style: italic; }
-#timer { font-size: 20px; font-weight: bold; color: var(--accent); text-align: right; margin-bottom: 20px; position: sticky; top: 10px; background: white; padding: 5px; border-radius: 5px; }
-.question { background: #fff; margin-bottom: 25px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; }
-.options label { display: block; padding: 10px; margin-bottom: 8px; background: #f9f9f9; border-radius: 5px; cursor: pointer; }
+body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
+#quiz-container { background: white; max-width: 800px; width: 100%; padding: 30px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+.header { text-align: center; border-bottom: 2px solid var(--primary); margin-bottom: 20px; }
 .hidden { display: none; }
-input[type="text"] { width: 100%; padding: 12px; margin: 15px 0; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-button { background: var(--primary); color: white; border: none; padding: 15px 30px; cursor: pointer; border-radius: 8px; width: 100%; font-size: 18px; font-weight: bold; }
-button:hover { background: #34495e; }
+input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+button { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+.secondary-btn { background: #7f8c8d; margin-top: 5px; }
+.question { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+.options label { display: block; padding: 8px; cursor: pointer; }
+#timer { text-align: right; color: var(--accent); font-weight: bold; margin-bottom: 10px; }
+.table-wrapper { overflow-x: auto; margin-top: 20px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+th { background: #eee; }
+.admin-link { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
