@@ -113,7 +113,8 @@ function finishQuiz() {
 // --- MÜƏLLİM (ADMIN) FUNKSİYALARI ---
 
 function checkAdmin() {
-    if (document.getElementById('admin-password').value === "nermin2025") {
+    const passInput = document.getElementById('admin-password').value;
+    if (passInput === "nermine2025") { // YENİ PAROL BURADA
         document.getElementById('admin-login').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
         loadResults();
@@ -143,14 +144,12 @@ function loadResults() {
     });
 }
 
-// Tək bir nəticəni silmək
 function deleteResult(key) {
     if (confirm("Bu nəticəni silmək istəyirsiniz?")) {
         database.ref('imtahan_neticeleri/' + key).set(null);
     }
 }
 
-// Bütün nəticələri təmizləmək
 function clearAllResults() {
     if (confirm("DİQQƏT: Bütün şagird nəticələri silinəcək! Əminsiniz?")) {
         database.ref('imtahan_neticeleri').set(null)
