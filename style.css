@@ -1,13 +1,11 @@
-
 :root {
-    --primary-color: #1a5f7a; 
-    --accent-color: #c84b31;  
+    --primary-color: #1a5f7a;
+    --accent-color: #c84b31;
     --bg-color: #f0f2f5;
     --text-color: #2d3436;
     --white: #ffffff;
     --shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
-
 
 body {
     font-family: 'Inter', 'Segoe UI', sans-serif;
@@ -15,169 +13,64 @@ body {
     color: var(--text-color);
     margin: 0;
     display: flex;
-    flex-direction: column; 
-    align-items: center;   
-    justify-content: center; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     min-height: 100vh;
     padding: 20px;
-    box-sizing: border-box;
 }
-
 
 #quiz-container {
     background: var(--white);
-    max-width: 700px;
+    max-width: 750px;
     width: 100%;
-    padding: 40px;
+    padding: 30px;
     border-radius: 20px;
     box-shadow: var(--shadow);
     position: relative;
     overflow: hidden;
-    margin-bottom: 20px; 
 }
-
 
 #quiz-container::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
+    top: 0; left: 0; right: 0; height: 6px;
     background: linear-gradient(90deg, var(--primary-color), #2ecc71);
 }
 
-.header {
-    text-align: center;
-    margin-bottom: 35px;
-}
+.header { text-align: center; margin-bottom: 25px; }
+.header h1 { color: var(--primary-color); margin: 0; font-size: 26px; }
 
-.header h1 {
-    font-size: 28px;
-    color: var(--primary-color);
-    margin: 0;
-}
-
-.welcome-msg {
-    background: #e8f1f5;
-    padding: 15px;
-    border-radius: 10px;
-    border-left: 4px solid var(--primary-color);
-    margin-bottom: 25px;
-}
-
-
-button {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 14px 25px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s ease;
-    width: 100%;
-    margin-top: 10px;
-}
-
-button:hover {
-    filter: brightness(1.1);
-    transform: translateY(-2px);
-}
-
-.secondary-btn {
-    background: #7f8c8d;
-    margin-top: 8px;
-}
-
-.question {
-    background: #fdfdfd;
-    padding: 20px;
-    border: 1px solid #f1f1f1;
-    border-radius: 15px;
-    margin-bottom: 20px;
-}
-
-.options label {
-    display: block;
-    padding: 12px 15px;
-    margin-bottom: 8px;
-    border-radius: 10px;
-    border: 1px solid #eee;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.options label:hover {
-    background: #f0f7ff;
-}
-
-/* Cədvəl Dizaynı */
-.table-wrapper {
-    margin-top: 20px;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #eee;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-}
-
-th {
-    background: #f8f9fa;
-    font-size: 14px;
-}
-
-tr:hover {
-    background-color: #f9f9f9;
-}
-
-/* Müəllif Hüququ (Footer) - Tam Mərkəzdə */
-.site-footer {
-    text-align: center;
-    padding: 20px;
-    width: 100%;
-    max-width: 700px;
-    color: #636e72;
-    font-size: 14px;
-    border-top: 1px solid #dfe6e9;
-    margin-top: 10px;
-}
-
-.site-footer span {
-    color: var(--primary-color);
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.hidden { display: none; }
-
-#timer {
-    text-align: right;
-    color: var(--accent-color);
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
-.tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-.tab-btn { background: #eee; color: #333; padding: 10px; border-radius: 8px 8px 0 0; }
+/* Tablar */
+.tabs { display: flex; gap: 5px; margin-bottom: 20px; }
+.tab-btn { background: #eee; color: #333; padding: 12px; border-radius: 10px 10px 0 0; cursor: pointer; border: none; flex: 1; transition: 0.3s; }
 .tab-btn.active { background: var(--primary-color); color: white; }
-.tab-content { padding: 10px 0; }
+
+/* Sual Redaktoru */
+.editor-header { background: #fdf9f3; padding: 15px; border-radius: 10px; border-left: 5px solid #f39c12; margin-bottom: 15px; font-size: 14px; }
+.q-row { background: #f9f9f9; padding: 15px; border: 1px solid #ddd; border-radius: 12px; margin-bottom: 15px; }
+.q-row input { display: block; width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+.q-row .opt-a { border-left: 5px solid #27ae60; background: #f0fff4; }
+
+.add-btn { background: #3498db !important; margin-bottom: 10px; }
+.save-btn { background: #27ae60 !important; }
+.danger-btn { background: #e74c3c !important; width: auto; padding: 8px 15px; font-size: 12px; }
+
+/* Cədvəl */
+.table-wrapper { overflow-x: auto; margin-top: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f8f9fa; }
+
+/* Arxiv Kartları */
+.quiz-card { background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+
+/* Ümumi */
+input[type="text"], input[type="password"] { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
+button { cursor: pointer; border: none; padding: 12px; border-radius: 10px; font-weight: 600; width: 100%; transition: 0.3s; color: white; background: var(--primary-color); }
+.secondary-btn { background: #95a5a6; }
 .hidden { display: none; }
+.detail-box { background: #f0f7ff; padding: 15px; border-radius: 10px; margin-top: 15px; border: 1px solid #1a5f7a; }
 
-.q-row { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ddd; }
-.q-row input { margin: 5px 0; font-size: 14px; }
-.add-btn { background: #3498db; margin-bottom: 20px; }
-.danger-btn { background: #e74c3c; width: auto; padding: 8px 15px; margin-bottom: 10px; }
-
-.quiz-card { display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; }
-.active-quiz { border: 2px solid #27ae60; background: #eafff2; }
+.site-footer { text-align: center; padding: 20px; width: 100%; max-width: 750px; color: #636e72; font-size: 13px; border-top: 1px solid #dfe6e9; margin-top: 20px; }
+.site-footer span { color: var(--primary-color); font-weight: bold; }
