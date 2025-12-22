@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Nərminə Əmirbəyova | Portal</title>
+    <title>Əmirbəyova Nərminə | Tarix Portalı</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -45,12 +45,27 @@
         <button onclick="finishQuiz()">Sınağı Bitir</button>
     </div>
 
+    <div id="admin-login" class="hidden">
+        <h3>Müəllim Girişi</h3>
+        <input type="password" id="admin-password" placeholder="Parolu daxil edin">
+        <button onclick="checkAdmin()">Giriş Et</button>
+        <button onclick="hideLogin()" class="secondary-btn">Geri</button>
+    </div>
+
     <div id="admin-panel" class="hidden">
-        <h3>Şagird Nəticələri (Detallar üçün ada tıklayın)</h3>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h3>Nəticələr</h3>
+            <button onclick="clearAllResults()" style="background: #c0392b; width: auto; padding: 8px 12px; font-size: 12px;">Hamısını Sil</button>
+        </div>
         <div class="table-wrapper">
             <table>
                 <thead>
-                    <tr><th>Ad Soyad</th><th>Bal</th><th>Tarix</th></tr>
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>Düz</th>
+                        <th>Səhv</th>
+                        <th>Tarix / Sil</th>
+                    </tr>
                 </thead>
                 <tbody id="results-body"></tbody>
             </table>
@@ -65,16 +80,10 @@
         <button onclick="logoutAdmin()" class="secondary-btn" style="margin-top: 20px;">Çıxış</button>
     </div>
 
-    <div id="admin-login" class="hidden">
-        <h3>Müəllim Girişi</h3>
-        <input type="password" id="admin-password" placeholder="Parol">
-        <button onclick="checkAdmin()">Giriş Et</button>
-        <button onclick="hideLogin()" class="secondary-btn">Geri</button>
-    </div>
-
     <div id="result-screen" class="hidden">
-        <h2>Sınaq Bitdi!</h2>
-        <p id="final-score"></p>
+        <h2 style="color: #27ae60;">Sınaq Başa Çatdı!</h2>
+        <p id="final-score" style="font-size: 18px; margin: 20px 0;"></p>
+        <p>Məlumatlar müəlliməyə göndərildi.</p>
     </div>
 </div>
 
