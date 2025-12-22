@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Əmirbəyova Nərminə | İdarəetmə Paneli</title>
+    <title>Əmirbəyova Nərminə | Sınaq Portalı</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,10 +11,11 @@
 <div id="quiz-container">
     <div class="header">
         <h1>Əmirbəyova Nərminə</h1>
-        <p id="current-quiz-title">Yüklənir...</p>
+        <p id="current-quiz-title" style="font-weight: bold; color: #1a5f7a;">Aktiv sınaq təyin edilir...</p>
     </div>
 
     <div id="login-screen">
+        <div class="welcome-msg">"Uğurlar uşaqlar, sualları diqqətlə oxuyun!"</div>
         <input type="text" id="student-name" placeholder="Ad və Soyadınızı daxil edin">
         <button onclick="startQuiz()">Sınağa Başla</button>
         <button onclick="showLogin()" class="secondary-btn">Müəllim Girişi</button>
@@ -26,6 +27,13 @@
         <button onclick="finishQuiz()">Sınağı Bitir</button>
     </div>
 
+    <div id="admin-login" class="hidden">
+        <h3>Müəllim Girişi</h3>
+        <input type="password" id="admin-password" placeholder="Parolu daxil edin">
+        <button onclick="checkAdmin()">Giriş Et</button>
+        <button onclick="hideLogin()" class="secondary-btn">Geri</button>
+    </div>
+
     <div id="admin-panel" class="hidden">
         <div class="tabs">
             <button class="tab-btn active" onclick="openTab('results-tab')">Nəticələr</button>
@@ -33,44 +41,67 @@
         </div>
 
         <div id="results-tab" class="tab-content">
-            <button onclick="clearAllResults()" class="danger-btn">Hamısını Sil</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3>Şagird Nəticələri</h3>
+                <button onclick="clearAllResults()" class="danger-btn">Hamısını Sil</button>
+            </div>
             <div class="table-wrapper">
                 <table>
-                    <thead><tr><th>Ad Soyad</th><th>Düz</th><th>Səhv</th><th>Sil</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>Ad Soyad</th>
+                            <th>Düz</th>
+                            <th>Səhv</th>
+                            <th>Tarix / Sil</th>
+                        </tr>
+                    </thead>
                     <tbody id="results-body"></tbody>
                 </table>
+            </div>
+            
+            <div id="student-details" class="hidden detail-box">
+                <h4 id="detail-name">Analiz</h4>
+                <div id="detail-list"></div>
+                <button onclick="document.getElementById('student-details').classList.add('hidden')" class="secondary-btn">Bağla</button>
             </div>
         </div>
 
         <div id="editor-tab" class="tab-content hidden">
-            <h3>Yeni Sınaq Yarat</h3>
-            <input type="text" id="new-quiz-name" placeholder="Sınağın adı (məs: 7-ci sinif sınağı)">
-            <div id="question-inputs">
-                </div>
-            <button onclick="addNewQuestionRow()" class="add-btn">+ Sual Əlavə Et</button>
-            <button onclick="saveNewQuiz()" style="background:#27ae60">Sınağı Yadda Saxla</button>
+            <div class="editor-header">
+                <h3>📝 Yeni Sınaq Yarat</h3>
+                <p>Sualları daxil edin. Birinci xanaya <b>mütləq düzgün cavabı</b> yazın.</p>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="new-quiz-name" placeholder="Sınağın mövzusu (Məs: Səfəvilər dövləti)">
+            </div>
+
+            <div id="question-inputs" class="questions-list"></div>
+
+            <div class="editor-actions">
+                <button onclick="addNewQuestionRow()" class="add-btn">➕ Yeni Sual Əlavə Et</button>
+                <button onclick="saveNewQuiz()" class="save-btn">💾 Sınağı Yadda Saxla</button>
+            </div>
             
-            <hr>
-            <h3>Bütün Sınaqlar</h3>
-            <div id="all-quizzes-list"></div>
+            <hr class="separator">
+            
+            <h3>📚 Sınaq Arxivi</h3>
+            <div id="all-quizzes-list" class="quiz-grid"></div>
         </div>
 
-        <button onclick="logoutAdmin()" class="secondary-btn">Çıxış</button>
-    </div>
-
-    <div id="admin-login" class="hidden">
-        <input type="password" id="admin-password" placeholder="Parol">
-        <button onclick="checkAdmin()">Giriş Et</button>
-        <button onclick="hideLogin()" class="secondary-btn">Geri</button>
+        <button onclick="logoutAdmin()" class="secondary-btn" style="margin-top:20px;">Sistemdən Çıx</button>
     </div>
 
     <div id="result-screen" class="hidden">
-        <h2 id="final-score"></h2>
+        <h2 style="color: #27ae60;">Sınaq Başa Çatdı!</h2>
+        <p id="final-score" style="font-size: 18px; margin: 20px 0;"></p>
+        <p>Uğurlarınız bol olsun!</p>
     </div>
 </div>
 
 <footer class="site-footer">
-    <p>Layihə rəhbəri: <span>Xədicə Abbaszadə</span></p>
+    <p>&copy; 2025 Bütün hüquqlar qorunur.</p>
+    <p>Layihə rəhbəri və proqram təminatı: <span>Xədicə Abbaszadə</span></p>
 </footer>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
