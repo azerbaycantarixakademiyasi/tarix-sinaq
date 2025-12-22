@@ -15,11 +15,13 @@
     </div>
 
     <div id="login-screen">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <p>"Uğurlar uşaqlar, sualları diqqətlə oxuyun!"</p>
-        </div>
-        <input type="text" id="student-name" placeholder="Ad və Soyadınızı daxil edin" required>
+        <div class="welcome-msg">"Uğurlar uşaqlar, sualları diqqətlə oxuyun!"</div>
+        <input type="text" id="student-name" placeholder="Ad və Soyadınızı daxil edin">
         <button onclick="startQuiz()">Sınağa Başla</button>
+        
+        <div class="admin-link">
+            <button onclick="showLogin()" class="secondary-btn">Müəllim Girişi</button>
+        </div>
     </div>
 
     <div id="quiz-screen" class="hidden">
@@ -46,17 +48,39 @@
         <button onclick="finishQuiz()">Sınağı Bitir</button>
     </div>
 
+    <div id="admin-login" class="hidden">
+        <h3>Müəllim Girişi</h3>
+        <input type="password" id="admin-password" placeholder="Parolu daxil edin">
+        <button onclick="checkAdmin()">Giriş Et</button>
+        <button onclick="hideLogin()" class="secondary-btn">Geri</button>
+    </div>
+
+    <div id="admin-panel" class="hidden">
+        <h3>Şagird Nəticələri</h3>
+        <div class="table-wrapper">
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>Bal</th>
+                        <th>Tarix</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body"></tbody>
+            </table>
+        </div>
+        <button onclick="logoutAdmin()" class="secondary-btn">Çıxış</button>
+    </div>
+
     <div id="result-screen" class="hidden">
         <h2 style="color: #27ae60;">Sınaq Başa Çatdı!</h2>
-        <p id="final-score" style="font-size: 22px; margin: 20px 0;"></p>
-        <p>Nəticəniz Nərminə müəllimənin sisteminə uğurla göndərildi.</p>
-        <p style="color: #7f8c8d; font-size: 14px;">(Səhifəni bağlaya bilərsiniz)</p>
+        <p id="final-score"></p>
+        <p>Nəticəniz Nərminə müəllimənin sisteminə göndərildi.</p>
     </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
 <script src="script.js"></script>
 
 </body>
