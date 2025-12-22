@@ -1,11 +1,13 @@
+
 :root {
-    --primary-color: #1a5f7a; /* Ciddi dəniz mavisi */
-    --accent-color: #c84b31;  /* Diqqət çəkən kərpic rəngi */
+    --primary-color: #1a5f7a; 
+    --accent-color: #c84b31;  
     --bg-color: #f0f2f5;
     --text-color: #2d3436;
     --white: #ffffff;
     --shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
+
 
 body {
     font-family: 'Inter', 'Segoe UI', sans-serif;
@@ -13,23 +15,28 @@ body {
     color: var(--text-color);
     margin: 0;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column; 
+    align-items: center;   
+    justify-content: center; 
     min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
 }
+
 
 #quiz-container {
     background: var(--white);
     max-width: 700px;
-    width: 90%;
+    width: 100%;
     padding: 40px;
     border-radius: 20px;
     box-shadow: var(--shadow);
     position: relative;
     overflow: hidden;
+    margin-bottom: 20px; 
 }
 
-/* Üst hissə zolağı */
+
 #quiz-container::before {
     content: "";
     position: absolute;
@@ -49,13 +56,6 @@ body {
     font-size: 28px;
     color: var(--primary-color);
     margin: 0;
-    letter-spacing: -0.5px;
-}
-
-.header p {
-    color: #636e72;
-    margin-top: 5px;
-    font-size: 15px;
 }
 
 .welcome-msg {
@@ -64,10 +64,9 @@ body {
     border-radius: 10px;
     border-left: 4px solid var(--primary-color);
     margin-bottom: 25px;
-    font-style: italic;
 }
 
-/* Düymələr */
+
 button {
     background: var(--primary-color);
     color: white;
@@ -77,31 +76,21 @@ button {
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: 0.3s ease;
     width: 100%;
-    margin-top: 15px;
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(26, 95, 122, 0.3);
-    filter: brightness(1.1);
-}
-
-.secondary-btn {
-    background: transparent;
-    color: #636e72;
-    border: 1px solid #dfe6e9;
     margin-top: 10px;
 }
 
-.secondary-btn:hover {
-    background: #f8f9fa;
-    color: var(--primary-color);
-    box-shadow: none;
+button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
 }
 
-/* Suallar */
+.secondary-btn {
+    background: #7f8c8d;
+    margin-top: 8px;
+}
+
 .question {
     background: #fdfdfd;
     padding: 20px;
@@ -110,35 +99,23 @@ button:hover {
     margin-bottom: 20px;
 }
 
-.question p {
-    font-weight: 600;
-    font-size: 17px;
-    margin-bottom: 15px;
-}
-
 .options label {
     display: block;
     padding: 12px 15px;
     margin-bottom: 8px;
     border-radius: 10px;
     border: 1px solid #eee;
-    transition: 0.2s;
     cursor: pointer;
+    transition: 0.2s;
 }
 
 .options label:hover {
     background: #f0f7ff;
-    border-color: #cbdcf0;
 }
 
-input[type="radio"] {
-    margin-right: 10px;
-    accent-color: var(--primary-color);
-}
-
-/* Admin Cədvəli */
+/* Cədvəl Dizaynı */
 .table-wrapper {
-    margin-top: 25px;
+    margin-top: 20px;
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid #eee;
@@ -149,71 +126,44 @@ table {
     border-collapse: collapse;
 }
 
+th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
 th {
     background: #f8f9fa;
-    padding: 15px;
     font-size: 14px;
-    color: #636e72;
-}
-
-td {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-}
-
-tr:last-child td {
-    border-bottom: none;
-}
-
-.hidden { display: none; }
-
-#timer {
-    display: inline-block;
-    background: #fff0f0;
-    color: var(--accent-color);
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 20px;
 }
 
 tr:hover {
-    background-color: #f0f7ff !important;
+    background-color: #f9f9f9;
 }
 
-#results-body tr {
-    transition: 0.3s;
-    border-bottom: 1px solid #eee;
-}
-
-#detail-list p {
-    padding: 10px;
-    background: white;
-    margin: 5px 0;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.secondary-btn {
-    background: #7f8c8d !important;
-}
-
+/* Müəllif Hüququ (Footer) - Tam Mərkəzdə */
 .site-footer {
     text-align: center;
-    padding: 20px 0;
+    padding: 20px;
     width: 100%;
+    max-width: 700px;
     color: #636e72;
     font-size: 14px;
-    border-top: 1px solid #dfe6e9; /* Zərif bir xətt */
-    margin-top: 40px;
-    background: transparent;
+    border-top: 1px solid #dfe6e9;
+    margin-top: 10px;
 }
 
 .site-footer span {
     color: var(--primary-color);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+}
+
+.hidden { display: none; }
+
+#timer {
+    text-align: right;
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-bottom: 15px;
 }
