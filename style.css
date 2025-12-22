@@ -74,3 +74,27 @@ button { cursor: pointer; border: none; padding: 12px; border-radius: 10px; font
 
 .site-footer { text-align: center; padding: 20px; width: 100%; max-width: 750px; color: #636e72; font-size: 13px; border-top: 1px solid #dfe6e9; margin-top: 20px; }
 .site-footer span { color: var(--primary-color); font-weight: bold; }
+
+
+.opt-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 5px 0;
+}
+
+.opt-input input[type="radio"] {
+    width: 20px !important;
+    height: 20px;
+    cursor: pointer;
+}
+
+.opt-input input[type="text"] {
+    flex: 1;
+}
+
+/* Seçilən variantın fonunu bir az fərqləndirək */
+.opt-input input[type="radio"]:checked + input[type="text"] {
+    border: 2px solid #27ae60;
+    background: #f0fff4;
+}
