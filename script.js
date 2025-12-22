@@ -12,60 +12,149 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 
+let activeQuizData = null;
+let currentQuestionsCount = 0;
 let timeLeft = localStorage.getItem('timeLeft') ? parseInt(localStorage.getItem('timeLeft')) : 900;
 let timerInterval;
 
-// Səhifə yüklənəndə vəziyyəti bərpa et
+// SƏHİFƏ YÜKLƏNƏNDƏ
 window.onload = function() {
+    // 1. Aktiv sınağı müəyyən et və yüklə
+    database.ref('active_quiz_id').on('value', (snap) => {
+        const activeId = snap.val();
+        if (activeId) {
+            database.ref('quizzes/' + activeId).once('value', (qSnap) => {
+                activeQuizData = qSnap.val();
+                document.getElementById('current-quiz-title').innerText = activeQuizData.title;
+            });
+        } else {
+            document.getElementById('current-quiz-title').innerText = "Hazırda aktiv sınaq yoxdur.";
+        }
+    });
+
+    // 2. Şagirdin yarımçıq sınağı varsa bərpa et
     const savedName = localStorage.getItem('studentName');
     const isQuizRunning = localStorage.getItem('isQuizRunning');
-
     if (isQuizRunning === "true" && savedName) {
         document.getElementById('student-name').value = savedName;
-        restoreAnswers();
         resumeQuiz();
     }
-
-    document.querySelectorAll('input[type="radio"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            saveAnswer(this.name, this.value);
-        });
-    });
 };
 
-function saveAnswer(qName, val) {
-    let answers = JSON.parse(localStorage.getItem('savedAnswers')) || {};
-    answers[qName] = val;
-    localStorage.setItem('savedAnswers', JSON.stringify(answers));
+// --- MÜƏLLİM PANELİ (TABLAR) ---
+function openTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.remove('hidden');
+    event.currentTarget.classList.add('active');
+    
+    if(tabId === 'editor-tab') loadAllQuizzes();
+    if(tabId === 'results-tab') loadResults();
 }
 
-function restoreAnswers() {
-    let answers = JSON.parse(localStorage.getItem('savedAnswers')) || {};
-    for (let qName in answers) {
-        let val = answers[qName];
-        let radio = document.querySelector(`input[name="${qName}"][value="${val}"]`);
-        if (radio) radio.checked = true;
-    }
+// YENİ SUAL XANASI ƏLAVƏ ET
+function addNewQuestionRow() {
+    currentQuestionsCount++;
+    const container = document.getElementById('question-inputs');
+    const div = document.createElement('div');
+    div.className = 'q-row';
+    div.style = "background:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:10px; border:1px solid #ddd;";
+    div.innerHTML = `
+        <strong>Sual ${currentQuestionsCount}</strong>
+        <input type="text" class="q-text" placeholder="Sualı yazın" style="width:100%; margin:5px 0; padding:8px;">
+        <input type="text" class="opt-a" placeholder="Düzgün cavab" style="width:100%; margin:5px 0; padding:8px; border:1px solid green;">
+        <input type="text" class="opt-b" placeholder="Səhv variant 1" style="width:100%; margin:5px 0; padding:8px;">
+        <input type="text" class="opt-c" placeholder="Səhv variant 2" style="width:100%; margin:5px 0; padding:8px;">
+    `;
+    container.appendChild(div);
 }
 
+// YENİ SINAĞI YADDA SAXLA
+function saveNewQuiz() {
+    const title = document.getElementById('new-quiz-name').value.trim();
+    if (!title) { alert("Sınağa ad verin!"); return; }
+
+    const qRows = document.querySelectorAll('.q-row');
+    let questions = [];
+
+    qRows.forEach(row => {
+        const sual = row.querySelector('.q-text').value;
+        const dogru = row.querySelector('.opt-a').value;
+        const b = row.querySelector('.opt-b').value;
+        const c = row.querySelector('.opt-c').value;
+
+        if(sual && dogru) {
+            questions.push({
+                sual: sual,
+                dogru: dogru,
+                variantlar: [dogru, b, c].sort(() => Math.random() - 0.5)
+            });
+        }
+    });
+
+    if(questions.length === 0) { alert("Ən azı bir sual daxil edin!"); return; }
+
+    database.ref('quizzes').push({ title, questions }).then(() => {
+        alert("Sınaq uğurla yaradıldı!");
+        document.getElementById('question-inputs').innerHTML = "";
+        document.getElementById('new-quiz-name').value = "";
+        currentQuestionsCount = 0;
+        loadAllQuizzes();
+    });
+}
+
+// BÜTÜN SINAQLARI GÖSTƏR VƏ AKTİV ET
+function loadAllQuizzes() {
+    const list = document.getElementById('all-quizzes-list');
+    database.ref('quizzes').on('value', snap => {
+        list.innerHTML = "";
+        snap.forEach(child => {
+            const quiz = child.val();
+            list.innerHTML += `
+                <div style="display:flex; justify-content:space-between; padding:10px; border:1px solid #eee; margin-bottom:5px; border-radius:8px;">
+                    <span>${quiz.title} (${quiz.questions.length} sual)</span>
+                    <button onclick="setActiveQuiz('${child.key}')" style="width:auto; padding:5px 10px; background:#2ecc71;">Aktiv Et</button>
+                </div>`;
+        });
+    });
+}
+
+function setActiveQuiz(id) {
+    database.ref('active_quiz_id').set(id).then(() => alert("Sınaq saytda aktiv edildi!"));
+}
+
+// --- ŞAGİRD İMTAHAN PROSESİ ---
 function startQuiz() {
+    if(!activeQuizData) { alert("Müəllimə hələ sınağı aktiv etməyib!"); return; }
     const name = document.getElementById('student-name').value.trim();
     if (name.length < 5) { alert("Ad və Soyad daxil edin!"); return; }
-    
+
     localStorage.setItem('studentName', name);
     localStorage.setItem('isQuizRunning', "true");
-    localStorage.setItem('timeLeft', 900);
-    localStorage.setItem('savedAnswers', JSON.stringify({}));
-
+    
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('quiz-screen').classList.remove('hidden');
+    
+    renderQuestions();
     timerInterval = setInterval(updateTimer, 1000);
 }
 
-function resumeQuiz() {
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('quiz-screen').classList.remove('hidden');
-    timerInterval = setInterval(updateTimer, 1000);
+function renderQuestions() {
+    const qContainer = document.getElementById('dynamic-questions');
+    qContainer.innerHTML = "";
+    activeQuizData.questions.forEach((q, index) => {
+        let optionsHtml = q.variantlar.map(v => `
+            <label style="display:block; padding:10px; border:1px solid #eee; margin:5px 0; border-radius:8px; cursor:pointer;">
+                <input type="radio" name="q${index}" value="${v === q.dogru ? 1 : 0}" data-text="${v}"> ${v}
+            </label>
+        `).join("");
+        
+        qContainer.innerHTML += `
+            <div class="question" style="margin-bottom:20px; padding:15px; background:#fdfdfd; border-radius:10px; border:1px solid #eee;">
+                <p><strong>${index + 1}. ${q.sual}</strong></p>
+                <div class="options">${optionsHtml}</div>
+            </div>`;
+    });
 }
 
 function updateTimer() {
@@ -79,18 +168,17 @@ function updateTimer() {
 function finishQuiz() {
     clearInterval(timerInterval);
     let correctCount = 0;
-    let questions = document.querySelectorAll('.question');
     let studentAnswers = [];
+    const questions = activeQuizData.questions;
 
-    questions.forEach((qDiv, index) => {
-        const qNum = index + 1;
-        const selected = qDiv.querySelector(`input[name="q${qNum}"]:checked`);
-        let isCorrect = selected ? (parseInt(selected.value) > 0) : false;
+    questions.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        let isCorrect = selected ? (parseInt(selected.value) === 1) : false;
         if (isCorrect) correctCount++;
 
         studentAnswers.push({
-            sual: qDiv.querySelector('p').innerText,
-            cavab: selected ? selected.getAttribute('data-text') : "Boş buraxılıb",
+            sual: q.sual,
+            cavab: selected ? selected.getAttribute('data-text') : "Boş",
             dogrudurmu: isCorrect
         });
     });
@@ -101,20 +189,19 @@ function finishQuiz() {
         duz: correctCount,
         sehv: questions.length - correctCount,
         tarix: new Date().toLocaleString(),
-        detallar: studentAnswers
+        detallar: studentAnswers,
+        sinaqAdi: activeQuizData.title
     }).then(() => {
         localStorage.clear();
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('final-score').innerHTML = `<strong>${name}</strong>: ${correctCount} Düz, ${questions.length - correctCount} Səhv`;
+        document.getElementById('final-score').innerHTML = `Nəticə: ${correctCount} Düz, ${questions.length - correctCount} Səhv`;
     });
 }
 
-// --- MÜƏLLİM (ADMIN) FUNKSİYALARI ---
-
+// --- ADMİN GİRİŞ VƏ NƏTİCƏLƏR ---
 function checkAdmin() {
-    const passInput = document.getElementById('admin-password').value;
-    if (passInput === "nermine2025") { // YENİ PAROL BURADA
+    if (document.getElementById('admin-password').value === "nermine2025") {
         document.getElementById('admin-login').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
         loadResults();
@@ -125,56 +212,33 @@ function loadResults() {
     const tbody = document.getElementById('results-body');
     database.ref('imtahan_neticeleri').on('value', (snapshot) => {
         tbody.innerHTML = "";
-        if (!snapshot.exists()) {
-            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center'>Nəticə yoxdur</td></tr>";
-            return;
-        }
         snapshot.forEach((child) => {
             const val = child.val();
-            const key = child.key;
             tbody.innerHTML += `<tr>
-                <td onclick="showDetails('${key}')" style="cursor:pointer"><strong>${val.adSoyad}</strong></td>
-                <td style="color:green">D: ${val.duz}</td>
-                <td style="color:red">S: ${val.sehv}</td>
-                <td style="font-size:11px">${val.tarix} 
-                    <button onclick="deleteResult('${key}')" style="width:auto; background:#e74c3c; padding:3px 7px; margin-left:5px;">X</button>
-                </td>
+                <td onclick="showDetails('${child.key}')" style="cursor:pointer"><strong>${val.adSoyad}</strong><br><small>${val.sinaqAdi || ''}</small></td>
+                <td style="color:green">${val.duz}</td>
+                <td style="color:red">${val.sehv}</td>
+                <td><button onclick="deleteResult('${child.key}')" style="width:auto; background:red; padding:2px 8px;">X</button></td>
             </tr>`;
         });
     });
-}
-
-function deleteResult(key) {
-    if (confirm("Bu nəticəni silmək istəyirsiniz?")) {
-        database.ref('imtahan_neticeleri/' + key).set(null);
-    }
-}
-
-function clearAllResults() {
-    if (confirm("DİQQƏT: Bütün şagird nəticələri silinəcək! Əminsiniz?")) {
-        database.ref('imtahan_neticeleri').set(null)
-        .then(() => alert("Baza tamamilə təmizləndi."))
-        .catch(err => alert("Xəta: " + err.message));
-    }
 }
 
 function showDetails(key) {
     database.ref('imtahan_neticeleri/' + key).once('value', (snapshot) => {
         const data = snapshot.val();
         document.getElementById('student-details').classList.remove('hidden');
-        document.getElementById('detail-name').innerText = data.adSoyad + " - Analiz";
+        document.getElementById('detail-name').innerText = data.adSoyad;
         let html = "";
         data.detallar.forEach(d => {
-            const color = d.dogrudurmu ? "green" : "red";
-            html += `<p style="color:${color}; border-bottom:1px solid #eee; padding:5px;">
-                ${d.dogrudurmu ? '✅' : '❌'} <strong>${d.sual}</strong><br>
-                <small>Cavab: ${d.cavab}</small>
-            </p>`;
+            html += `<p style="color:${d.dogrudurmu?'green':'red'}">${d.dogrudurmu?'✅':'❌'} ${d.sual}: ${d.cavab}</p>`;
         });
         document.getElementById('detail-list').innerHTML = html;
     });
 }
 
+function clearAllResults() { if (confirm("Hamısını silmək?")) database.ref('imtahan_neticeleri').set(null); }
+function deleteResult(key) { if (confirm("Silinsin?")) database.ref('imtahan_neticeleri/' + key).set(null); }
 function showLogin() { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('admin-login').classList.remove('hidden'); }
 function hideLogin() { document.getElementById('admin-login').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }
 function logoutAdmin() { location.reload(); }
