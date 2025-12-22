@@ -19,20 +19,20 @@ let timerInterval;
 
 // SƏHİFƏ YÜKLƏNƏNDƏ
 window.onload = function() {
-    // 1. Aktiv sınağı müəyyən et və yüklə
+    // 1. Aktiv sınağı müəyyən et
     database.ref('active_quiz_id').on('value', (snap) => {
         const activeId = snap.val();
         if (activeId) {
             database.ref('quizzes/' + activeId).once('value', (qSnap) => {
                 activeQuizData = qSnap.val();
-                document.getElementById('current-quiz-title').innerText = activeQuizData.title;
+                document.getElementById('current-quiz-title').innerText = "Aktiv: " + activeQuizData.title;
             });
         } else {
             document.getElementById('current-quiz-title').innerText = "Hazırda aktiv sınaq yoxdur.";
         }
     });
 
-    // 2. Şagirdin yarımçıq sınağı varsa bərpa et
+    // 2. Yarımçıq qalan sınaq qoruması
     const savedName = localStorage.getItem('studentName');
     const isQuizRunning = localStorage.getItem('isQuizRunning');
     if (isQuizRunning === "true" && savedName) {
@@ -52,24 +52,35 @@ function openTab(tabId) {
     if(tabId === 'results-tab') loadResults();
 }
 
-// YENİ SUAL XANASI ƏLAVƏ ET
+// YENİ SUAL SATIRI ƏLAVƏ ET (Variantı radio ilə seçmək üçün)
 function addNewQuestionRow() {
     currentQuestionsCount++;
     const container = document.getElementById('question-inputs');
     const div = document.createElement('div');
     div.className = 'q-row';
-    div.style = "background:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:10px; border:1px solid #ddd;";
+    const radioName = `correct_${currentQuestionsCount}`; 
+    
     div.innerHTML = `
         <strong>Sual ${currentQuestionsCount}</strong>
-        <input type="text" class="q-text" placeholder="Sualı yazın" style="width:100%; margin:5px 0; padding:8px;">
-        <input type="text" class="opt-a" placeholder="Düzgün cavab" style="width:100%; margin:5px 0; padding:8px; border:1px solid green;">
-        <input type="text" class="opt-b" placeholder="Səhv variant 1" style="width:100%; margin:5px 0; padding:8px;">
-        <input type="text" class="opt-c" placeholder="Səhv variant 2" style="width:100%; margin:5px 0; padding:8px;">
+        <input type="text" class="q-text" placeholder="Sualı daxil edin">
+        <div class="opt-input">
+            <input type="radio" name="${radioName}" value="A" checked> 
+            <input type="text" class="opt-a" placeholder="A variantı">
+        </div>
+        <div class="opt-input">
+            <input type="radio" name="${radioName}" value="B"> 
+            <input type="text" class="opt-b" placeholder="B variantı">
+        </div>
+        <div class="opt-input">
+            <input type="radio" name="${radioName}" value="C"> 
+            <input type="text" class="opt-c" placeholder="C variantı">
+        </div>
+        <p style="font-size:11px; color:#666; margin-top:5px;">* Düzgün variantı nöqtə ilə işarələyin.</p>
     `;
     container.appendChild(div);
 }
 
-// YENİ SINAĞI YADDA SAXLA
+// YENİ SINAĞI BAZAYA YAZ
 function saveNewQuiz() {
     const title = document.getElementById('new-quiz-name').value.trim();
     if (!title) { alert("Sınağa ad verin!"); return; }
@@ -77,25 +88,33 @@ function saveNewQuiz() {
     const qRows = document.querySelectorAll('.q-row');
     let questions = [];
 
-    qRows.forEach(row => {
+    qRows.forEach((row, index) => {
         const sual = row.querySelector('.q-text').value;
-        const dogru = row.querySelector('.opt-a').value;
+        const a = row.querySelector('.opt-a').value;
         const b = row.querySelector('.opt-b').value;
         const c = row.querySelector('.opt-c').value;
+        
+        const radioName = `correct_${index + 1}`;
+        const selectedLetter = row.querySelector(`input[name="${radioName}"]:checked`).value;
+        
+        let dogruCavab;
+        if(selectedLetter === "A") dogruCavab = a;
+        else if(selectedLetter === "B") dogruCavab = b;
+        else dogruCavab = c;
 
-        if(sual && dogru) {
+        if(sual && a && b && c) {
             questions.push({
                 sual: sual,
-                dogru: dogru,
-                variantlar: [dogru, b, c].sort(() => Math.random() - 0.5)
+                dogru: dogruCavab,
+                variantlar: [a, b, c].sort(() => Math.random() - 0.5)
             });
         }
     });
 
-    if(questions.length === 0) { alert("Ən azı bir sual daxil edin!"); return; }
+    if(questions.length === 0) { alert("Xanalara məlumat daxil edin!"); return; }
 
     database.ref('quizzes').push({ title, questions }).then(() => {
-        alert("Sınaq uğurla yaradıldı!");
+        alert("Sınaq bazaya əlavə edildi!");
         document.getElementById('question-inputs').innerHTML = "";
         document.getElementById('new-quiz-name').value = "";
         currentQuestionsCount = 0;
@@ -103,7 +122,7 @@ function saveNewQuiz() {
     });
 }
 
-// BÜTÜN SINAQLARI GÖSTƏR VƏ AKTİV ET
+// BÜTÜN SINAQLAR VƏ AKTİVLƏŞDİRMƏ
 function loadAllQuizzes() {
     const list = document.getElementById('all-quizzes-list');
     database.ref('quizzes').on('value', snap => {
@@ -111,19 +130,19 @@ function loadAllQuizzes() {
         snap.forEach(child => {
             const quiz = child.val();
             list.innerHTML += `
-                <div style="display:flex; justify-content:space-between; padding:10px; border:1px solid #eee; margin-bottom:5px; border-radius:8px;">
+                <div class="quiz-card">
                     <span>${quiz.title} (${quiz.questions.length} sual)</span>
-                    <button onclick="setActiveQuiz('${child.key}')" style="width:auto; padding:5px 10px; background:#2ecc71;">Aktiv Et</button>
+                    <button onclick="setActiveQuiz('${child.key}')" style="width:auto; background:#2ecc71; padding:5px 12px;">Aktiv Et</button>
                 </div>`;
         });
     });
 }
 
 function setActiveQuiz(id) {
-    database.ref('active_quiz_id').set(id).then(() => alert("Sınaq saytda aktiv edildi!"));
+    database.ref('active_quiz_id').set(id).then(() => alert("Sınaq artıq saytda aktivdir!"));
 }
 
-// --- ŞAGİRD İMTAHAN PROSESİ ---
+// --- ŞAGİRD TƏRƏFİ ---
 function startQuiz() {
     if(!activeQuizData) { alert("Müəllimə hələ sınağı aktiv etməyib!"); return; }
     const name = document.getElementById('student-name').value.trim();
@@ -144,13 +163,11 @@ function renderQuestions() {
     qContainer.innerHTML = "";
     activeQuizData.questions.forEach((q, index) => {
         let optionsHtml = q.variantlar.map(v => `
-            <label style="display:block; padding:10px; border:1px solid #eee; margin:5px 0; border-radius:8px; cursor:pointer;">
-                <input type="radio" name="q${index}" value="${v === q.dogru ? 1 : 0}" data-text="${v}"> ${v}
-            </label>
+            <label><input type="radio" name="q${index}" value="${v === q.dogru ? 1 : 0}" data-text="${v}"> ${v}</label>
         `).join("");
         
         qContainer.innerHTML += `
-            <div class="question" style="margin-bottom:20px; padding:15px; background:#fdfdfd; border-radius:10px; border:1px solid #eee;">
+            <div class="question">
                 <p><strong>${index + 1}. ${q.sual}</strong></p>
                 <div class="options">${optionsHtml}</div>
             </div>`;
@@ -195,11 +212,11 @@ function finishQuiz() {
         localStorage.clear();
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('final-score').innerHTML = `Nəticə: ${correctCount} Düz, ${questions.length - correctCount} Səhv`;
+        document.getElementById('final-score').innerHTML = `Nəticəniz: ${correctCount} Düz, ${questions.length - correctCount} Səhv`;
     });
 }
 
-// --- ADMİN GİRİŞ VƏ NƏTİCƏLƏR ---
+// --- ADMİN PANEL ---
 function checkAdmin() {
     if (document.getElementById('admin-password').value === "nermine2025") {
         document.getElementById('admin-login').classList.add('hidden');
@@ -216,8 +233,8 @@ function loadResults() {
             const val = child.val();
             tbody.innerHTML += `<tr>
                 <td onclick="showDetails('${child.key}')" style="cursor:pointer"><strong>${val.adSoyad}</strong><br><small>${val.sinaqAdi || ''}</small></td>
-                <td style="color:green">${val.duz}</td>
-                <td style="color:red">${val.sehv}</td>
+                <td style="color:green">D: ${val.duz}</td>
+                <td style="color:red">S: ${val.sehv}</td>
                 <td><button onclick="deleteResult('${child.key}')" style="width:auto; background:red; padding:2px 8px;">X</button></td>
             </tr>`;
         });
@@ -237,8 +254,14 @@ function showDetails(key) {
     });
 }
 
-function clearAllResults() { if (confirm("Hamısını silmək?")) database.ref('imtahan_neticeleri').set(null); }
-function deleteResult(key) { if (confirm("Silinsin?")) database.ref('imtahan_neticeleri/' + key).set(null); }
+function clearAllResults() { if (confirm("Bütün nəticələr silinsin?")) database.ref('imtahan_neticeleri').set(null); }
+function deleteResult(key) { if (confirm("Bu nəticə silinsin?")) database.ref('imtahan_neticeleri/' + key).set(null); }
 function showLogin() { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('admin-login').classList.remove('hidden'); }
 function hideLogin() { document.getElementById('admin-login').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }
 function logoutAdmin() { location.reload(); }
+function resumeQuiz() {
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('quiz-screen').classList.remove('hidden');
+    renderQuestions();
+    timerInterval = setInterval(updateTimer, 1000);
+}
