@@ -199,3 +199,12 @@ tr:hover {
 .secondary-btn {
     background: #7f8c8d !important;
 }
+footer {
+    padding: 15px;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+}
+footer strong {
+    color: var(--primary-color);
+    border-bottom: 1px solid #ddd;
+}
