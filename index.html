@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Əmirbəyova Nərminə | Tarix Sınağı</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="quiz-container">
+    <div class="header">
+        <h1>Əmirbəyova Nərminə</h1>
+        <p>Onlayn Tarix Sınaq Portalı</p>
+    </div>
+
+    <div id="login-screen">
+        <input type="text" id="student-name" placeholder="Ad və Soyadınızı daxil edin">
+        <button onclick="startQuiz()">Sınağa Başla</button>
+    </div>
+
+    <div id="quiz-screen" class="hidden">
+        <div id="timer">Qalan Vaxt: 15:00</div>
+        <div class="question">
+            <p>1. Azərbaycan Xalq Cümhuriyyəti neçənci ildə yaradılmışdır?</p>
+            <div class="options">
+                <label><input type="radio" name="q1" value="10"> 1918</label>
+                <label><input type="radio" name="q1" value="0"> 1920</label>
+            </div>
+        </div>
+        <button onclick="finishQuiz()">Sınağı Bitir</button>
+    </div>
+
+    <div id="result-screen" class="hidden">
+        <h2>Sınaq Başa Çatdı!</h2>
+        <p id="final-score"></p>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
