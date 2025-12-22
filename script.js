@@ -14,18 +14,16 @@ const database = firebase.database();
 let timeLeft = localStorage.getItem('timeLeft') ? parseInt(localStorage.getItem('timeLeft')) : 900;
 let timerInterval;
 
-// SƏHİFƏ YÜKLƏNƏNDƏ HƏR ŞEYİ BƏRPA ET
 window.onload = function() {
     const savedName = localStorage.getItem('studentName');
     const isQuizRunning = localStorage.getItem('isQuizRunning');
 
     if (isQuizRunning === "true" && savedName) {
         document.getElementById('student-name').value = savedName;
-        restoreAnswers(); // Əvvəlki seçimləri bərpa et
+        restoreAnswers();
         resumeQuiz();
     }
 
-    // Hər radio düyməsinə klikləyəndə yaddaşa yazma funksiyası qoşuruq
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', function() {
             saveAnswer(this.name, this.value);
@@ -33,14 +31,12 @@ window.onload = function() {
     });
 };
 
-// Seçilən variantı yadda saxla
 function saveAnswer(questionName, value) {
     let answers = JSON.parse(localStorage.getItem('savedAnswers')) || {};
     answers[questionName] = value;
     localStorage.setItem('savedAnswers', JSON.stringify(answers));
 }
 
-// Seçilmiş variantları ekrana qaytar
 function restoreAnswers() {
     let answers = JSON.parse(localStorage.getItem('savedAnswers')) || {};
     for (let questionName in answers) {
@@ -57,7 +53,7 @@ function startQuiz() {
     localStorage.setItem('studentName', name);
     localStorage.setItem('isQuizRunning', "true");
     localStorage.setItem('timeLeft', 900);
-    localStorage.setItem('savedAnswers', JSON.stringify({})); // Yeni sınaq üçün təmizlə
+    localStorage.setItem('savedAnswers', JSON.stringify({}));
 
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('quiz-screen').classList.remove('hidden');
@@ -74,50 +70,56 @@ function updateTimer() {
     let min = Math.floor(timeLeft / 60);
     let sec = timeLeft % 60;
     document.getElementById('timer').innerText = `Qalan Vaxt: ${min}:${sec < 10 ? '0' : ''}${sec}`;
-    
     localStorage.setItem('timeLeft', timeLeft);
-
-    if (timeLeft-- <= 0) {
-        finishQuiz();
-    }
+    if (timeLeft-- <= 0) finishQuiz();
 }
 
 function finishQuiz() {
     clearInterval(timerInterval);
-    let score = 0;
+    let correctCount = 0;
+    let questions = document.querySelectorAll('.question');
+    let totalQuestions = questions.length;
     let studentAnswers = [];
 
-    document.querySelectorAll('.question').forEach((qDiv, index) => {
+    questions.forEach((qDiv, index) => {
         const qNum = index + 1;
         const selected = qDiv.querySelector(`input[name="q${qNum}"]:checked`);
         const qText = qDiv.querySelector('p').innerText;
         
-        let answerData = {
+        // Bu hissədə bal yox, doğruluğu yoxlayırıq (value="10" olanlar düzdür)
+        let isCorrect = selected ? (parseInt(selected.value) > 0) : false;
+        if (isCorrect) correctCount++;
+
+        studentAnswers.push({
             sual: qText,
-            cavab: selected ? selected.getAttribute('data-text') : "Cavab verilməyib",
-            dogrudurmu: selected ? (parseInt(selected.value) > 0) : false
-        };
-        
-        studentAnswers.push(answerData);
-        if (selected) score += parseInt(selected.value);
+            cavab: selected ? selected.getAttribute('data-text') : "Boş buraxılıb",
+            dogrudurmu: isCorrect
+        });
     });
 
+    let wrongCount = totalQuestions - correctCount;
     const name = localStorage.getItem('studentName');
 
     database.ref('imtahan_neticeleri').push({
         adSoyad: name,
-        toplananBal: score,
+        duz: correctCount,
+        sehv: wrongCount,
+        cemi: totalQuestions,
         tarix: new Date().toLocaleString(),
         detallar: studentAnswers
     }).then(() => {
-        localStorage.clear(); // Hər şeyi təmizləyirik
+        localStorage.clear();
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('final-score').innerText = `${name}, Balınız: ${score}`;
+        document.getElementById('final-score').innerHTML = `
+            <strong>${name}</strong>,<br> 
+            Düz: <span style="color:green">${correctCount}</span> | 
+            Səhv: <span style="color:red">${wrongCount}</span>
+        `;
     });
 }
 
-// ADMIN PANEL FUNKSİYALARI
+// ADMIN PANEL
 function checkAdmin() {
     if (document.getElementById('admin-password').value === "nermin2025") {
         document.getElementById('admin-login').classList.add('hidden');
@@ -135,7 +137,8 @@ function loadResults() {
             const key = child.key;
             tbody.innerHTML += `<tr onclick="showDetails('${key}')" style="cursor:pointer">
                 <td><strong>${val.adSoyad}</strong></td>
-                <td>${val.toplananBal}</td>
+                <td style="color:green">D: ${val.duz}</td>
+                <td style="color:red">S: ${val.sehv}</td>
                 <td>${val.tarix}</td>
             </tr>`;
         });
@@ -146,7 +149,7 @@ function showDetails(key) {
     database.ref('imtahan_neticeleri/' + key).once('value', (snapshot) => {
         const data = snapshot.val();
         document.getElementById('student-details').classList.remove('hidden');
-        document.getElementById('detail-name').innerText = data.adSoyad + " - Cavab Analizi";
+        document.getElementById('detail-name').innerText = data.adSoyad + " (Nəticə: " + data.duz + " düz)";
         let listHtml = "";
         data.detallar.forEach(d => {
             const color = d.dogrudurmu ? "#27ae60" : "#e74c3c";
