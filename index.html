@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Əmirbəyova Nərminə | Tarix Portalı</title>
+    <title>Əmirbəyova Nərminə | İdarəetmə Paneli</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,11 +11,10 @@
 <div id="quiz-container">
     <div class="header">
         <h1>Əmirbəyova Nərminə</h1>
-        <p>Tarix Sınaq Analitika Portalı</p>
+        <p id="current-quiz-title">Yüklənir...</p>
     </div>
 
     <div id="login-screen">
-        <div class="welcome-msg">"Uğurlar uşaqlar, sualları diqqətlə oxuyun!"</div>
         <input type="text" id="student-name" placeholder="Ad və Soyadınızı daxil edin">
         <button onclick="startQuiz()">Sınağa Başla</button>
         <button onclick="showLogin()" class="secondary-btn">Müəllim Girişi</button>
@@ -23,73 +22,57 @@
 
     <div id="quiz-screen" class="hidden">
         <div id="timer">Qalan Vaxt: 15:00</div>
-        
-        <div class="question" data-q="1">
-            <p>1. Azərbaycan Xalq Cümhuriyyəti neçənci ildə yaradılmışdır?</p>
-            <div class="options">
-                <label><input type="radio" name="q1" value="0" data-text="1917"> 1917</label>
-                <label><input type="radio" name="q1" value="10" data-text="1918"> 1918</label>
-                <label><input type="radio" name="q1" value="0" data-text="1920"> 1920</label>
-            </div>
-        </div>
-
-        <div class="question" data-q="2">
-            <p>2. "Gülüstan" müqaviləsi neçənci ildə imzalanıb?</p>
-            <div class="options">
-                <label><input type="radio" name="q2" value="10" data-text="1813"> 1813</label>
-                <label><input type="radio" name="q2" value="0" data-text="1828"> 1828</label>
-                <label><input type="radio" name="q2" value="0" data-text="1805"> 1805</label>
-            </div>
-        </div>
-
+        <div id="dynamic-questions"></div>
         <button onclick="finishQuiz()">Sınağı Bitir</button>
     </div>
 
+    <div id="admin-panel" class="hidden">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('results-tab')">Nəticələr</button>
+            <button class="tab-btn" onclick="openTab('editor-tab')">Sınaq Hazırla</button>
+        </div>
+
+        <div id="results-tab" class="tab-content">
+            <button onclick="clearAllResults()" class="danger-btn">Hamısını Sil</button>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Ad Soyad</th><th>Düz</th><th>Səhv</th><th>Sil</th></tr></thead>
+                    <tbody id="results-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="editor-tab" class="tab-content hidden">
+            <h3>Yeni Sınaq Yarat</h3>
+            <input type="text" id="new-quiz-name" placeholder="Sınağın adı (məs: 7-ci sinif sınağı)">
+            <div id="question-inputs">
+                </div>
+            <button onclick="addNewQuestionRow()" class="add-btn">+ Sual Əlavə Et</button>
+            <button onclick="saveNewQuiz()" style="background:#27ae60">Sınağı Yadda Saxla</button>
+            
+            <hr>
+            <h3>Bütün Sınaqlar</h3>
+            <div id="all-quizzes-list"></div>
+        </div>
+
+        <button onclick="logoutAdmin()" class="secondary-btn">Çıxış</button>
+    </div>
+
     <div id="admin-login" class="hidden">
-        <h3>Müəllim Girişi</h3>
-        <input type="password" id="admin-password" placeholder="Parolu daxil edin">
+        <input type="password" id="admin-password" placeholder="Parol">
         <button onclick="checkAdmin()">Giriş Et</button>
         <button onclick="hideLogin()" class="secondary-btn">Geri</button>
     </div>
 
-    <div id="admin-panel" class="hidden">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <h3>Nəticələr</h3>
-            <button onclick="clearAllResults()" style="background: #c0392b; width: auto; padding: 8px 12px; font-size: 12px;">Hamısını Sil</button>
-        </div>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Ad Soyad</th>
-                        <th>Düz</th>
-                        <th>Səhv</th>
-                        <th>Tarix / Sil</th>
-                    </tr>
-                </thead>
-                <tbody id="results-body"></tbody>
-            </table>
-        </div>
-        
-        <div id="student-details" class="hidden" style="margin-top: 20px; padding: 15px; background: #f0f7ff; border-radius: 10px; border: 1px solid #1a5f7a;">
-            <h4 id="detail-name">Şagird Cavabları</h4>
-            <div id="detail-list"></div>
-            <button onclick="document.getElementById('student-details').classList.add('hidden')" class="secondary-btn">Bağla</button>
-        </div>
-
-        <button onclick="logoutAdmin()" class="secondary-btn" style="margin-top: 20px;">Çıxış</button>
-    </div>
-
     <div id="result-screen" class="hidden">
-        <h2 style="color: #27ae60;">Sınaq Başa Çatdı!</h2>
-        <p id="final-score" style="font-size: 18px; margin: 20px 0;"></p>
-        <p>Məlumatlar müəlliməyə göndərildi.</p>
+        <h2 id="final-score"></h2>
     </div>
 </div>
+
 <footer class="site-footer">
-    <p>&copy; 2025 Bütün hüquqlar qorunur.</p>
-    <p>Layihə rəhbəri və proqram təminatı: <span>Xədicə Abbaszadə</span></p>
+    <p>Layihə rəhbəri: <span>Xədicə Abbaszadə</span></p>
 </footer>
+
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 <script src="script.js"></script>
