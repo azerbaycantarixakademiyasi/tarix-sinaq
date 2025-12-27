@@ -1,3 +1,4 @@
+// Firebase Konfiqurasiyası
 const firebaseConfig = {
   apiKey: "AIzaSyDulTEwR08ErC3J9uvjDHGJ1wxqTy91x1I",
   authDomain: "tarix-sinaq-db.firebaseapp.com",
@@ -8,7 +9,9 @@ const firebaseConfig = {
   appId: "1:233204280838:web:7d00c9800170a13ca45d87"
 };
 
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const database = firebase.database();
 
 let activeQuizData = null;
@@ -17,21 +20,17 @@ let currentQuestionsCount = 0;
 let timeLeft = 900;
 let timerInterval;
 
-// SƏHİFƏ YÜKLƏNƏNDƏ
-window.onload = function() {
-    // Şagird hələ giriş etməyib, gözləyirik.
-};
-
-// --- ŞAGİRD PAROL GİRİŞİ ---
+// --- ŞAGİRD GİRİŞİ (TƏKMİLLƏŞDİRİLMİŞ) ---
 function loginStudent() {
-    const pass = document.getElementById('student-pass').value.trim();
-    if (!pass) { alert("Parol daxil edin!"); return; }
+    const passInput = document.getElementById('student-pass').value.trim();
+    if (!passInput) { alert("Parolu daxil edin!"); return; }
 
-    database.ref('students').once('value', (snapshot) => {
+    database.ref('students').once('value').then((snapshot) => {
         let found = false;
         snapshot.forEach((child) => {
-            if (child.val().password === pass) {
-                currentStudent = { id: child.key, ...child.val() };
+            const studentData = child.val();
+            if (studentData.password === passInput) {
+                currentStudent = { id: child.key, ...studentData };
                 found = true;
             }
         });
@@ -42,19 +41,22 @@ function loginStudent() {
             document.getElementById('welcome-student').innerText = `Xoş gəldin, ${currentStudent.name}!`;
             loadAvailableQuizzes();
         } else {
-            alert("Parol yanlışdır!");
+            alert("Sistemdə belə bir parol tapılmadı. Zəhmət olmasa yenidən yoxlayın.");
         }
+    }).catch(err => {
+        console.error("Firebase xətası:", err);
+        alert("Bağlantı xətası baş verdi.");
     });
 }
 
-// ŞAGİRD ÜÇÜN TESTLƏRİ YÜKLƏ (BİTMİŞLƏRİ GİZLƏ)
+// ŞAGİRD ÜÇÜN TESTLƏRİ YÜKLƏ
 function loadAvailableQuizzes() {
     const select = document.getElementById('active-quizzes-select');
-    const finishedQuizzes = currentStudent.finishedQuizzes || {};
-
     database.ref('quizzes').on('value', (snap) => {
         select.innerHTML = '<option value="">-- Sınaq seçin --</option>';
         let count = 0;
+        const finishedQuizzes = currentStudent.finishedQuizzes || {};
+
         snap.forEach((child) => {
             const quiz = child.val();
             if (quiz.status === "active" && !finishedQuizzes[child.key]) {
@@ -62,11 +64,58 @@ function loadAvailableQuizzes() {
                 count++;
             }
         });
-        if (count === 0) select.innerHTML = '<option value="">Sizin üçün aktiv sınaq yoxdur.</option>';
+        if (count === 0) select.innerHTML = '<option value="">Sizin üçün yeni sınaq yoxdur.</option>';
     });
 }
 
-// SINAĞA BAŞLA
+// --- MÜƏLLİM PANELİ: SINAQ İDARƏETMƏSİ (SİLMƏ VƏ DEAKTİV EDİLMİŞ) ---
+function loadAllQuizzes() {
+    const list = document.getElementById('all-quizzes-list');
+    database.ref('quizzes').on('value', snap => {
+        list.innerHTML = "";
+        if (!snap.exists()) {
+            list.innerHTML = "<p>Heç bir sınaq yaradılmayıb.</p>";
+            return;
+        }
+        snap.forEach(child => {
+            const q = child.val();
+            const qId = child.key;
+            const statusColor = q.status === "active" ? "#2ecc71" : "#95a5a6";
+            
+            list.innerHTML += `
+                <div class="quiz-card" style="border-left: 5px solid ${statusColor}; margin-bottom: 10px; padding: 10px; display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div>
+                        <strong>${q.title}</strong> <br>
+                        <small>Status: ${q.status === "active" ? "Aktiv" : "Deaktiv"}</small>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <button onclick="toggleStatus('${qId}','${q.status}')" style="width:auto; padding:5px 10px; font-size:12px; background: ${q.status === 'active' ? '#f39c12' : '#2ecc71'}">
+                            ${q.status === "active" ? 'Deaktiv Et' : 'Aktiv Et'}
+                        </button>
+                        <button onclick="deleteQuiz('${qId}')" style="width:auto; padding:5px 10px; font-size:12px; background: #e74c3c;">Sil</button>
+                    </div>
+                </div>`;
+        });
+    });
+}
+
+// Sınağı silmək funksiyası
+function deleteQuiz(id) {
+    if (confirm("Bu sınağı tamamilə silmək istəyirsiniz? Bu əməliyyat geri qaytarılmır!")) {
+        database.ref(`quizzes/${id}`).remove()
+        .then(() => alert("Sınaq silindi."))
+        .catch(err => alert("Xəta: " + err.message));
+    }
+}
+
+// Statusu dəyişmək (Aktiv/Deaktiv)
+function toggleStatus(id, currentStatus) {
+    const newStatus = currentStatus === "active" ? "inactive" : "active";
+    database.ref(`quizzes/${id}/status`).set(newStatus);
+}
+
+// --- DİGƏR FUNKSİYALAR (SABİT QALANLAR) ---
+
 function startQuiz() {
     const quizId = document.getElementById('active-quizzes-select').value;
     if (!quizId) { alert("Sınaq seçin!"); return; }
@@ -74,11 +123,9 @@ function startQuiz() {
     database.ref('quizzes/' + quizId).once('value', (snap) => {
         activeQuizData = snap.val();
         localStorage.setItem('selectedQuizId', quizId);
-        
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
         document.getElementById('current-quiz-title').innerText = activeQuizData.title;
-        
         renderQuestions();
         timerInterval = setInterval(updateTimer, 1000);
     });
@@ -89,9 +136,14 @@ function renderQuestions() {
     qContainer.innerHTML = "";
     activeQuizData.questions.forEach((q, index) => {
         let optionsHtml = q.variantlar.map(v => `
-            <label><input type="radio" name="q${index}" value="${v === q.dogru ? 1 : 0}" data-text="${v}"> ${v}</label>
+            <label style="display:block; margin:8px 0; cursor:pointer;">
+                <input type="radio" name="q${index}" value="${v === q.dogru ? 1 : 0}" data-text="${v}"> ${v}
+            </label>
         `).join("");
-        qContainer.innerHTML += `<div class="question"><p>${index+1}. ${q.sual}</p><div class="options">${optionsHtml}</div></div>`;
+        qContainer.innerHTML += `<div class="question" style="background:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:15px;">
+            <p><strong>${index+1}. ${q.sual}</strong></p>
+            <div class="options">${optionsHtml}</div>
+        </div>`;
     });
 }
 
@@ -112,7 +164,6 @@ function finishQuiz() {
         if (selected && parseInt(selected.value) === 1) correctCount++;
     });
 
-    // 1. Nəticəni yaz
     database.ref('imtahan_neticeleri').push({
         adSoyad: currentStudent.name,
         duz: correctCount,
@@ -121,15 +172,21 @@ function finishQuiz() {
         sinaqAdi: activeQuizData.title
     });
 
-    // 2. Şagirdin testi bitirdiyini qeyd et
     database.ref(`students/${currentStudent.id}/finishedQuizzes/${quizId}`).set(true).then(() => {
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('final-score').innerText = `${correctCount} Düz, ${questions.length - correctCount} Səhv.`;
+        document.getElementById('final-score').innerText = `Nəticəniz: ${correctCount} Düz, ${questions.length - correctCount} Səhv.`;
     });
 }
 
-// --- ADMİN PANEL FUNKSİYALARI ---
+function checkAdmin() {
+    if (document.getElementById('admin-password').value === "nermine2025") {
+        document.getElementById('admin-login').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+        loadResults();
+    } else { alert("Yanlış parol!"); }
+}
+
 function openTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -140,12 +197,17 @@ function openTab(tabId) {
 }
 
 function addNewStudent() {
-    const name = document.getElementById('new-student-name').value;
-    const pass = document.getElementById('new-student-pass').value;
+    const name = document.getElementById('new-student-name').value.trim();
+    const pass = document.getElementById('new-student-pass').value.trim();
     if(name && pass) {
-        database.ref('students').push({ name, password: pass, finishedQuizzes: {} })
-        .then(() => { alert("Şagird əlavə olundu!"); loadStudentList(); });
-    }
+        database.ref('students').push({ name: name, password: pass, finishedQuizzes: {} })
+        .then(() => { 
+            alert("Şagird əlavə olundu!"); 
+            document.getElementById('new-student-name').value = "";
+            document.getElementById('new-student-pass').value = "";
+            loadStudentList(); 
+        });
+    } else { alert("Ad və Parol boş ola bilməz!"); }
 }
 
 function loadStudentList() {
@@ -154,18 +216,11 @@ function loadStudentList() {
         display.innerHTML = "";
         snap.forEach(child => {
             const s = child.val();
-            display.innerHTML += `<div class="quiz-card"><span>${s.name} (Parol: ${s.password})</span></div>`;
+            display.innerHTML += `<div class="quiz-card" style="margin-bottom:5px; padding:8px; border:1px solid #eee; border-radius:5px;">
+                <span>${s.name} (Parol: <strong>${s.password}</strong>)</span>
+            </div>`;
         });
     });
-}
-
-// (Digər sınaq hazırlama və admin giriş funksiyaları əvvəlki kimi qalır)
-function checkAdmin() {
-    if (document.getElementById('admin-password').value === "nermine2025") {
-        document.getElementById('admin-login').classList.add('hidden');
-        document.getElementById('admin-panel').classList.remove('hidden');
-        loadResults();
-    } else { alert("Yanlış!"); }
 }
 
 function addNewQuestionRow() {
@@ -175,16 +230,17 @@ function addNewQuestionRow() {
     div.className = 'q-row';
     const radioName = `correct_${currentQuestionsCount}`;
     div.innerHTML = `
-        <input type="text" class="q-text" placeholder="Sual">
-        <div style="display:flex; gap:10px;"><input type="radio" name="${radioName}" value="A" checked><input type="text" class="opt-a" placeholder="A variantı"></div>
-        <div style="display:flex; gap:10px;"><input type="radio" name="${radioName}" value="B"><input type="text" class="opt-b" placeholder="B variantı"></div>
-        <div style="display:flex; gap:10px;"><input type="radio" name="${radioName}" value="C"><input type="text" class="opt-c" placeholder="C variantı"></div>
+        <input type="text" class="q-text" placeholder="Sualı yazın" style="width:100%; margin-bottom:5px;">
+        <div style="display:flex; align-items:center; gap:10px;"><input type="radio" name="${radioName}" value="A" checked><input type="text" class="opt-a" placeholder="A variantı" style="flex:1;"></div>
+        <div style="display:flex; align-items:center; gap:10px;"><input type="radio" name="${radioName}" value="B"><input type="text" class="opt-b" placeholder="B variantı" style="flex:1;"></div>
+        <div style="display:flex; align-items:center; gap:10px;"><input type="radio" name="${radioName}" value="C"><input type="text" class="opt-c" placeholder="C variantı" style="flex:1;"></div>
     `;
     container.appendChild(div);
 }
 
 function saveNewQuiz() {
-    const title = document.getElementById('new-quiz-name').value;
+    const title = document.getElementById('new-quiz-name').value.trim();
+    if (!title) { alert("Sınağa ad verin!"); return; }
     const qRows = document.querySelectorAll('.q-row');
     let questions = [];
     qRows.forEach((row, i) => {
@@ -198,27 +254,27 @@ function saveNewQuiz() {
             variantlar: [a, b, c].sort(() => Math.random() - 0.5)
         });
     });
-    database.ref('quizzes').push({ title, questions, status: "inactive" }).then(() => alert("Yadda saxlanıldı!"));
+    database.ref('quizzes').push({ title, questions, status: "inactive" }).then(() => {
+        alert("Sınaq arxivə əlavə olundu!");
+        document.getElementById('question-inputs').innerHTML = "";
+        document.getElementById('new-quiz-name').value = "";
+        currentQuestionsCount = 0;
+        loadAllQuizzes();
+    });
 }
 
-function loadAllQuizzes() {
-    const list = document.getElementById('all-quizzes-list');
-    database.ref('quizzes').on('value', snap => {
-        list.innerHTML = "";
-        snap.forEach(child => {
-            const q = child.val();
-            list.innerHTML += `<div class="quiz-card"><span>${q.title}</span><button onclick="toggleStatus('${child.key}','${q.status}')">${q.status==="active"?'Deaktiv':'Aktiv'}</button></div>`;
+function loadResults() {
+    const b = document.getElementById('results-body');
+    database.ref('imtahan_neticeleri').on('value', s => {
+        b.innerHTML = "";
+        s.forEach(c => { 
+            const v = c.val(); 
+            b.innerHTML += `<tr><td>${v.adSoyad}</td><td style="color:green">${v.duz}</td><td style="color:red">${v.sehv}</td><td><small>${v.tarix}</small></td></tr>`; 
         });
     });
 }
-function toggleStatus(id, s) { database.ref(`quizzes/${id}/status`).set(s==="active"?"inactive":"active"); }
-function loadResults() {
-    database.ref('imtahan_neticeleri').on('value', s => {
-        const b = document.getElementById('results-body'); b.innerHTML = "";
-        s.forEach(c => { const v = c.val(); b.innerHTML += `<tr><td>${v.adSoyad}</td><td>${v.duz}</td><td>${v.sehv}</td><td>${v.tarix}</td></tr>`; });
-    });
-}
-function clearAllResults() { database.ref('imtahan_neticeleri').set(null); }
+
+function clearAllResults() { if(confirm("Bütün nəticələr silinsin?")) database.ref('imtahan_neticeleri').set(null); }
 function showLogin() { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('admin-login').classList.remove('hidden'); }
 function hideLogin() { document.getElementById('admin-login').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }
 function logoutAdmin() { location.reload(); }
