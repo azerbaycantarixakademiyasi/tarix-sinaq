@@ -9,7 +9,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     background-color: var(--bg-color);
     margin: 0;
     display: flex;
@@ -21,94 +21,71 @@ body {
 #quiz-container {
     background: var(--white);
     width: 90%;
-    max-width: 600px;
+    max-width: 500px; /* Bir az daraltdım ki, daha toplu görünsün */
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.1);
 }
 
-/* Dil seçimi düymələri */
-.lang-switcher {
+/* Giriş düymələrinin bir-birinə yapışmaması üçün konteyner */
+#student-login-area, #quiz-selection-area, #admin-login {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 15px; /* DÜYMƏLƏR ARASINDA 15px BOŞLUQ QOYUR */
 }
 
-.lang-switcher button {
-    width: auto !important;
-    padding: 5px 12px !important;
-    background: #e0e0e0;
-    color: #333;
-    font-size: 12px;
-}
-
-/* Sınaq Kartları - Əsas düzəliş burada */
-.quiz-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #fff;
-    padding: 15px 20px;
-    margin-bottom: 12px;
-    border-radius: 12px;
-    border: 1px solid #eee;
-    transition: 0.3s;
-}
-
-.quiz-card:hover {
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-}
-
-.quiz-card span {
-    font-weight: 600;
-    color: #2c3e50;
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-sizing: border-box;
     font-size: 15px;
-    flex: 1; /* Yazı boş qalan yeri tutsun */
+    margin-bottom: 5px; /* İnputla düymə arası boşluq */
 }
 
-/* Düymə qabı */
-.quiz-card div {
-    display: flex;
-    gap: 8px; /* Düymələr arası məsafə */
-}
-
-/* Düymələrin ölçüləri - Şəkildəki problemi həll edir */
 button {
     cursor: pointer;
     border: none;
-    padding: 12px;
+    padding: 14px;
     border-radius: 10px;
     font-weight: bold;
     color: white;
     background: var(--primary-color);
     width: 100%;
-    transition: 0.2s;
-}
-
-.quiz-card button {
-    width: auto !important; /* Bütün sətiri tutmasın */
-    min-width: 90px;
-    padding: 8px 15px !important;
-    font-size: 13px !important;
-    margin: 0 !important;
-}
-
-/* Rənglər */
-.btn-status-active { background-color: var(--warning) !important; }
-.btn-status-inactive { background-color: var(--success) !important; }
-.btn-delete { background-color: var(--danger) !important; }
-.secondary-btn { background-color: var(--gray) !important; }
-
-/* Giriş formaları */
-input {
-    width: 100%;
-    padding: 14px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-sizing: border-box;
+    transition: 0.3s;
     font-size: 15px;
 }
 
+/* Sınaq Arxivindəki balaca düymələr */
+.quiz-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+}
+
+.quiz-card div {
+    display: flex;
+    gap: 8px; /* Arxivdəki düymələr arası boşluq */
+}
+
+.quiz-card button {
+    width: auto !important;
+    min-width: 90px;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+}
+
+.secondary-btn { background-color: var(--gray) !important; }
+.btn-status-active { background-color: var(--warning) !important; }
+.btn-status-inactive { background-color: var(--success) !important; }
+.btn-delete { background-color: var(--danger) !important; }
+
 .hidden { display: none; }
+.lang-switcher { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 15px; }
+.lang-switcher button { width: auto; padding: 5px 10px; font-size: 12px; background: #eee; color: #333; }
