@@ -18,45 +18,46 @@
 
         <div id="login-screen">
             <h1 id="h1-title">Nərminə Əmirbəyovanın sınaq portalı</h1>
-            <p id="p-status">Giriş gözlənilir...</p>
-            
             <div id="student-login-area">
                 <input type="text" id="student-username" placeholder="İstifadəçi adınız">
                 <input type="password" id="student-pass" placeholder="Parolunuzu daxil edin">
                 <button onclick="loginStudent()">Giriş et</button>
                 <button class="secondary-btn" onclick="showAdminLogin()">Müəllim Girişi</button>
             </div>
-
             <div id="quiz-selection-area" class="hidden">
                 <h3 id="welcome-msg"></h3>
-                <select id="quiz-select">
-                    <option value="" id="opt-select">-- Sınaq seçin --</option>
-                </select>
+                <select id="quiz-select"><option value="">-- Sınaq seçin --</option></select>
                 <button onclick="startQuiz()">Sınağa Başla</button>
                 <button class="secondary-btn" onclick="logout()">Çıxış</button>
             </div>
         </div>
 
         <div id="admin-login" class="hidden">
-            <h3 id="admin-title">Müəllim Girişi</h3>
+            <h3>Müəllim Girişi</h3>
             <input type="password" id="admin-password" placeholder="Admin Parolu">
             <button onclick="checkAdmin()">Daxil ol</button>
             <button class="secondary-btn" onclick="hideAdminLogin()">Geri</button>
         </div>
 
         <div id="admin-panel" class="hidden">
+            <div class="admin-menu">
+                <button onclick="openTab('results')">Nəticələr</button>
+                <button onclick="openTab('quizzes')">Sınaqlar</button>
+                <button onclick="openTab('students')">Şagirdlər</button>
+            </div>
+
             <div class="results-header">
                 <h3 id="res-h3">Şagird Nəticələri</h3>
-                <button class="btn-clear" id="btn-clear" onclick="clearResults()">Təmizlə</button>
+                <button class="btn-clear" onclick="clearResults()">Təmizlə</button>
             </div>
+            
             <div id="results-display"></div>
-            <button class="secondary-btn" id="btn-logout-admin" onclick="logout()">Çıxış</button>
+            
+            <button class="secondary-btn" onclick="logout()">Çıxış</button>
         </div>
     </div>
 
-    <div class="site-footer">
-        Layihə rəhbəri: <span>Xədicə Abbaszadə</span>
-    </div>
+    <div class="site-footer">Layihə rəhbəri: <span>Xədicə Abbaszadə</span></div>
 
     <script src="script.js"></script>
 </body>
