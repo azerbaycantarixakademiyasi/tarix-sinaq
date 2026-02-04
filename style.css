@@ -3,26 +3,27 @@ body {
     background-color: #f2e9d9;
     margin: 0;
     display: flex;
-    justify-content: center; 
-    align-items: center;  
-    height: 100vh;        
-    overflow: hidden;       
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden; 
 }
 
 #quiz-container {
     background: #fffcf5;
-    padding: 25px;
-    border-radius: 15px;
+    padding: 40px; 
+    border-radius: 20px;
     border: 2px solid #d4a373;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    width: 90%;
-    max-width: 420px;
-    max-height: 90vh;     
-    overflow-y: auto;       
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px; 
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; 
 }
 
-/* Dil düymələrini sağ yuxarıda səliqəli yerləşdiririk */
 .lang-switcher {
     display: flex;
     justify-content: flex-end;
@@ -39,33 +40,27 @@ body {
     margin: 0;
 }
 
-h1 {
-    color: #5c4033; /* Mürəkkəb rəngi */
-    font-size: 24px;
-    margin: 10px 0;
+h1 + p {
+    margin-bottom: 10px;
+    color: #8b4513;
 }
 
 input, select {
     width: 100%;
-    padding: 12px;
+    padding: 15px;
     border: 1px solid #d4a373;
-    border-radius: 8px;
-    background: #fff;
-    font-size: 14px;
-    box-sizing: border-box;
+    border-radius: 10px;
+    font-size: 15px;
+    box-sizing: border-box; 
 }
 
 button {
     width: 100%;
-    padding: 12px;
-    background-color: #8b4513; /* Tarixi qəhvəyi */
-    color: #f2e9d9;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
+    padding: 15px;
+    margin-top: 5px; 
+    border-radius: 10px;
     font-weight: bold;
-    transition: 0.3s;
+    font-size: 16px;
 }
 
 button:hover {
@@ -79,12 +74,13 @@ button:hover {
 
 /* Footer-in sağa qaçmasını düzəldirik */
 .site-footer {
-    margin-top: auto;
-    padding: 20px;
-    color: #5c4033;
-    font-style: italic;
+    position: absolute;
+    bottom: 20px;
     text-align: center;
     width: 100%;
+    color: #5c4033;
+    font-style: italic;
+    font-size: 14px;
 }
 
 .site-footer span {
