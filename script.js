@@ -1,14 +1,14 @@
-// 1. DİL OBYEKTİ (Olduğu kimi qalır)
+// 1. DİL OBYEKTİ 
 const translations = {
     az: { title: "Nərminə Əmirbəyovanın sınaq portalı", waiting: "Giriş gözlənilir...", userPlace: "İstifadəçi adınız", passPlace: "Parolunuzu daxil edin", loginBtn: "Giriş et", adminBtn: "Müəllim Girişi", welcome: "Xoş gəldin", selectQuiz: "-- Sınaq seçin --", startBtn: "Sınağa Başla", logout: "Çıxış", adminTitle: "Müəllim Girişi", adminPass: "Admin Parolu", adminEnter: "Daxil ol", back: "Geri", resTitle: "Şagird Nəticələri", clear: "Təmizlə", wrong: "Məlumatlar yanlışdır!" },
     ru: { title: "Экзаменационный портал Нармины Амирбековой", waiting: "Ожидание входа...", userPlace: "Имя пользователя", passPlace: "Введите пароль", loginBtn: "Войти", adminBtn: "Вход для учителя", welcome: "Добро пожаловать", selectQuiz: "-- Выберите тест --", startBtn: "Начать тест", logout: "Выход", adminTitle: "Вход для учителя", adminPass: "Пароль админа", adminEnter: "Войти", back: "Назад", resTitle: "Результаты учеников", clear: "Очистить", wrong: "Неверные данные!" }
 };
 
-// 2. FİREBASE BAŞLATMA (Xətanı bura düzəldir)
+// 2. FİREBASE BAŞLATMA 
 const firebaseConfig = {
     apiKey: "AIzaSyDulTEwR08ErC3J9uvjDHGJ1wxqTy91x1I",
     authDomain: "tarix-sinaq-db.firebaseapp.com",
-    databaseURL: "https://tarix-sinaq-db-default-rtdb.europe-west1.firebasedatabase.app", // <--- BU SƏTİR MÜTLƏQDİR!
+    databaseURL: "https://tarix-sinaq-db-default-rtdb.europe-west1.firebasedatabase.app", 
     projectId: "tarix-sinaq-db",
     storageBucket: "tarix-sinaq-db.firebasestorage.app",
     messagingSenderId: "233204280838",
@@ -23,7 +23,7 @@ const database = firebase.database();
 
 let currentLang = localStorage.getItem('lang') || 'az';
 
-// 3. ƏSAS FUNKSİYALAR (Global sahədə olmalıdırlar)
+// 3. ƏSAS FUNKSİYALAR 
 window.onload = () => {
     applyLanguage(currentLang);
     checkSession();
@@ -70,7 +70,7 @@ window.loginStudent = function() {
 // Admin Girişi (Console-dakı xətanı bu düzəldir)
 window.checkAdmin = function() {
     const pass = document.getElementById('admin-password').value;
-    if(pass === "12345") { // Buranı öz şifrən et
+    if(pass === "nermine2026") { 
         document.getElementById('admin-login').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
     } else {
