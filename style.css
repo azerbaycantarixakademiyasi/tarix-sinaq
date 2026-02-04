@@ -1,106 +1,94 @@
 :root {
-    --primary-blue: #1a4e8a; /* Professional tünd göy */
-    --light-blue: #e7f1ff;   /* Yumşaq göy fon */
+    --primary: #1a4e8a; 
+    --bg-light: #eef4fb;
     --white: #ffffff;
-    --text-dark: #2c3e50;
-    --gray: #f8f9fa;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--light-blue);
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--bg-light);
     margin: 0;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden; /* Səhifə sürüşməsin (scroll olmasın) */
 }
 
 #quiz-container {
     background: var(--white);
-    padding: 40px;
+    padding: 40px 30px;
     border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
     width: 100%;
-    max-width: 500px; /* Admin paneli üçün ideal genişlik */
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Düymələr və inputlar arasında boşluq qoyur */
+    max-width: 420px;
+    position: relative; /* Dil düymələrini sağa bərkitmək üçün */
     text-align: center;
-    border-top: 8px solid var(--primary-blue);
+    border-top: 8px solid var(--primary);
 }
 
-/* Üst-üstə düşməni ləğv edən əsas hissə */
-.hidden {
-    display: none !important;
+/* DİL DÜYMƏLƏRİ - İSTƏDİYİN KİMİ BALACA */
+.lang-switcher {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 5px;
+}
+
+.lang-switcher button {
+    width: 35px !important; /* Çox balaca */
+    height: 25px !important;
+    padding: 0 !important;
+    font-size: 10px !important;
+    background: #cbdcf0 !important;
+    color: var(--primary) !important;
+    border-radius: 5px !important;
 }
 
 h1 {
-    color: var(--primary-blue);
-    margin: 0 0 10px 0;
-    font-size: 24px;
+    color: var(--primary);
+    font-size: 22px;
+    margin: 15px 0 5px 0;
 }
 
-input, select {
+p { color: #666; margin-bottom: 20px; }
+
+/* İnputlar arasında məsafə */
+input {
     width: 100%;
-    padding: 14px;
-    border: 2px solid #dee2e6;
-    border-radius: 10px;
-    font-size: 15px;
-    box-sizing: border-box; /* Daşmanın qarşısını alır */
-    transition: 0.3s;
+    padding: 12px;
+    margin-bottom: 12px; /* İnputlar arasını açır */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
 }
 
-input:focus {
-    border-color: var(--primary-blue);
-    outline: none;
-}
-
+/* Əsas Düymələr */
 button {
     width: 100%;
-    padding: 15px;
-    background-color: var(--primary-blue);
+    padding: 12px;
+    margin-top: 8px; /* Düymələr arasını açır */
+    background-color: var(--primary);
     color: white;
     border: none;
-    border-radius: 10px;
-    font-size: 16px;
+    border-radius: 8px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
 }
 
-button:hover {
-    filter: brightness(1.2);
-    transform: translateY(-2px);
-}
-
-/* İkinci dərəcəli düymələr (Müəllim girişi, Geri və s.) */
 .secondary-btn {
-    background-color: #6c757d;
-    margin-top: 5px;
+    background-color: #7f8c8d !important;
 }
 
-/* Admin Panel Cədvəli */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-
-th, td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-    font-size: 14px;
-}
-
-/* Footer (Layihə rəhbəri) */
+/* Footer tam mərkəzdə və aşağıda */
 .site-footer {
-    margin-top: 30px;
-    color: var(--primary-blue);
-    font-weight: 500;
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
     text-align: center;
+    font-size: 13px;
+    color: var(--primary);
+    font-weight: 500;
 }
