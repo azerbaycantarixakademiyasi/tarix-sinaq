@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarix Sınaq Portalı</title>
+    <title>Nərminə Əmirbəyova | Tarix Sınaq Portalı</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -42,6 +42,8 @@
                 <button onclick="showTab('students-section')">Şagirdlər</button>
             </div>
 
+            <hr>
+
             <div id="results-section" class="tab-content">
                 <div class="section-header">
                     <h3>Nəticələr</h3>
@@ -51,12 +53,12 @@
             </div>
 
             <div id="quizzes-section" class="tab-content hidden">
-                <h3>Yeni Sınaq</h3>
+                <h3>Yeni Sınaq Yaradın</h3>
                 <input type="text" id="quiz-title" placeholder="Sınaq Başlığı">
                 <input type="number" id="quiz-time" placeholder="Müddət (dəq)">
                 <div id="questions-area"></div>
-                <button onclick="addQuestionField()">+ Sual Əlavə Et</button>
-                <button class="save-btn" onclick="saveQuiz()">Sınağı Yadda Saxla</button>
+                <button class="variant-add-btn" onclick="addQuestionField()">+ Yeni Sual Əlavə Et</button>
+                <button class="save-btn" onclick="saveQuiz()">Sınağı Arxivə Yaz</button>
             </div>
 
             <div id="students-section" class="tab-content hidden">
@@ -69,6 +71,14 @@
             </div>
 
             <button class="logout-btn" onclick="logout()">Sistemdən Çıxış</button>
+        </div>
+    </div>
+
+    <div id="details-modal" class="hidden modal-overlay">
+        <div class="modal-box">
+            <h3>Şagirdin Cavabları</h3>
+            <div id="modal-content"></div>
+            <button onclick="closeModal()">Bağla</button>
         </div>
     </div>
 
