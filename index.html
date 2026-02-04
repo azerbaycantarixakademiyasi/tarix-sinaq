@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nərminə Əmirbəyova | Tarix Sınaq</title>
+    <title>Tarix Sınaq Portalı</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -11,37 +11,28 @@
 <body>
 
     <div id="quiz-container">
-        <div class="lang-switcher">
-            <button onclick="changeLang('az')">AZ</button>
-            <button onclick="changeLang('ru')">RU</button>
-        </div>
-
         <div id="login-screen">
-            <h1 id="h1-title">Nərminə Əmirbəyovanın sınaq portalı</h1>
-            <p id="p-status">Giriş gözlənilir...</p>
-            
+            <h1>Nərminə Əmirbəyovanın sınaq portalı</h1>
             <div id="student-login-area">
                 <input type="text" id="student-username" placeholder="İstifadəçi adınız">
                 <input type="password" id="student-pass" placeholder="Parolunuzu daxil edin">
                 <button onclick="loginStudent()">Giriş et</button>
-                <button class="secondary-btn" id="btn-admin-view" onclick="showAdminLogin()">Müəllim Girişi</button>
+                <button class="secondary-btn" onclick="showAdminLogin()">Müəllim Girişi</button>
             </div>
 
             <div id="quiz-selection-area" class="hidden">
                 <h3 id="welcome-msg"></h3>
-                <select id="quiz-select">
-                    <option value="" id="opt-select">-- Sınaq seçin --</option>
-                </select>
+                <select id="quiz-select"><option value="">-- Sınaq seçin --</option></select>
                 <button onclick="startQuiz()">Sınağa Başla</button>
                 <button class="secondary-btn" onclick="logout()">Çıxış</button>
             </div>
         </div>
 
         <div id="admin-login" class="hidden">
-            <h3 id="admin-login-title">Müəllim Girişi</h3>
+            <h3>Müəllim Girişi</h3>
             <input type="password" id="admin-password" placeholder="Admin Parolu">
             <button onclick="checkAdmin()">Daxil ol</button>
-            <button class="secondary-btn" id="btn-back" onclick="hideAdminLogin()">Geri</button>
+            <button class="secondary-btn" onclick="hideAdminLogin()">Geri</button>
         </div>
 
         <div id="admin-panel" class="hidden">
@@ -51,35 +42,34 @@
                 <button onclick="showTab('students-section')">Şagirdlər</button>
             </div>
 
-            <hr>
-
             <div id="results-section" class="tab-content">
                 <div class="section-header">
-                    <h3 id="res-h3">Şagird Nəticələri</h3>
+                    <h3>Nəticələr</h3>
                     <button class="btn-clear" onclick="clearResults()">Təmizlə</button>
                 </div>
                 <div id="results-display"></div>
             </div>
 
             <div id="quizzes-section" class="tab-content hidden">
-                <h3 id="quiz-h3">Sınaq Yaradın</h3>
+                <h3>Yeni Sınaq</h3>
                 <input type="text" id="quiz-title" placeholder="Sınaq Başlığı">
                 <input type="number" id="quiz-time" placeholder="Müddət (dəq)">
-                <button onclick="addQuestion()">+ Yeni Sual</button>
-                <button class="secondary-btn" onclick="saveQuiz()">Arxivə Yaz</button>
+                <div id="questions-area"></div>
+                <button onclick="addQuestionField()">+ Sual Əlavə Et</button>
+                <button class="save-btn" onclick="saveQuiz()">Sınağı Yadda Saxla</button>
             </div>
 
             <div id="students-section" class="tab-content hidden">
-                <h3>Şagird Siyahısı</h3>
+                <h3>Şagird Əlavə Et</h3>
+                <input type="text" id="new-std-name" placeholder="Ad Soyad">
+                <input type="text" id="new-std-pass" placeholder="Parol">
+                <button onclick="addStudent()">Şagirdi Bazaya Yaz</button>
+                <hr>
                 <div id="students-list"></div>
             </div>
 
             <button class="logout-btn" onclick="logout()">Sistemdən Çıxış</button>
         </div>
-    </div>
-
-    <div class="site-footer">
-        Layihə rəhbəri: <span>Xədicə Abbaszadə</span>
     </div>
 
     <script src="script.js"></script>
