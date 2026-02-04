@@ -1,21 +1,101 @@
-:root { --primary: #1a4e8a; --white: #ffffff; --gray: #8492a6; --bg: #f0f5fa; --danger: #c0392b; --success: #27ae60; }
-body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-#quiz-container { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 95%; max-width: 500px; text-align: center; border-top: 8px solid var(--primary); }
-input, select { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 5px; }
-.admin-tabs { display: flex; gap: 5px; margin-bottom: 15px; }
-.admin-tabs button { flex: 1; padding: 8px 2px; font-size: 12px; }
-.tab-content { background: #f9fbfe; padding: 15px; border-radius: 10px; text-align: left; }
-.question-box { border: 1px solid #c8d6e5; padding: 12px; margin-top: 15px; border-radius: 10px; background: white; }
-.variant-add-btn { background: #54a0ff; font-size: 12px; }
-.save-btn { background: var(--success); margin-top: 15px; }
+:root { 
+  --primary: #1a4e8a; 
+  --white: #ffffff; 
+  --gray: #8492a6; 
+  --bg: #f0f5fa; 
+  --danger: #c0392b; 
+  --success: #27ae60; }
+
+body { 
+  margin: 0; 
+  font-family: 'Segoe UI', sans-serif; 
+  background: var(--bg); 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  min-height: 100vh; }
+
+#quiz-container { 
+  background: var(--white); 
+  padding: 25px; 
+  border-radius: 20px; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+  width: 95%; 
+  max-width: 450px; 
+  text-align: center; 
+  border-top: 8px solid var(--primary); }
+
+input, select { 
+  width: 100%; 
+  padding: 12px; 
+  margin-bottom: 8px; 
+  border: 1px solid #ddd; 
+  border-radius: 8px; 
+  box-sizing: border-box; }
+
+button { 
+  width: 100%; 
+  padding: 12px; 
+  background: var(--primary); 
+  color: white; 
+  border: none; 
+  border-radius: 8px; 
+  font-weight: 600; 
+  cursor: pointer; 
+  margin-bottom: 5px; }
+
+.admin-tabs { 
+  display: flex; 
+  gap: 5px; 
+  margin-bottom: 15px; }
+
+.admin-tabs button { 
+  flex: 1; 
+  padding: 10px 2px; 
+  font-size: 12px; }
+
+.tab-content { 
+  background: #f9fbfe; 
+  padding: 15px; 
+  border-radius: 10px; 
+  text-align: left; }
+
+.question-box { 
+  border: 1px solid #c8d6e5; 
+  padding: 12px; 
+  margin-top: 10px; 
+  border-radius: 10px; 
+  background: white; }
+
+.save-btn { background: var(--success); }
+
 .hidden { display: none !important; }
 
-/* Modal Dizaynı */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 999; }
-.modal-box { background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 450px; max-height: 80vh; overflow-y: auto; }
+.modal-overlay { 
+  position: fixed; 
+  top: 0; left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background: rgba(0,0,0,0.8); 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  z-index: 1000; }
 
-/* Cədvəl Dizaynı */
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { border: 1px solid #ddd; padding: 8px; font-size: 13px; text-align: left; }
+.modal-box { 
+  background: white; 
+  padding: 20px; 
+  border-radius: 12px; 
+  width: 90%; 
+  max-width: 400px; 
+  max-height: 80vh; 
+  overflow-y: auto; }
+
+table { 
+  width: 100%; 
+  border-collapse: collapse; 
+  font-size: 13px; }
+
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+
 th { background: var(--primary); color: white; }
