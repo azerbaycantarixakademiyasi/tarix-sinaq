@@ -2,145 +2,51 @@
     --primary: #1a4e8a;
     --white: #ffffff;
     --gray: #8492a6;
-    --light-bg: #f0f5fa;
+    --bg: #f0f5fa;
     --danger: #c0392b;
 }
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background-color: var(--light-bg);
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: hidden; 
 }
 
 #quiz-container {
     background: var(--white);
-    padding: 35px;
+    padding: 25px;
     border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     width: 90%;
     max-width: 450px;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 15px; 
     text-align: center;
     border-top: 8px solid var(--primary);
 }
 
-/* AZ / RU DÜYMƏLƏRİ */
-.lang-switcher {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    display: flex;
-    gap: 5px;
-}
+.lang-switcher { position: absolute; top: 15px; right: 15px; display: flex; gap: 5px; }
+.lang-switcher button { width: 35px; height: 22px; font-size: 11px; cursor: pointer; border: none; background: #e1e8ef; border-radius: 4px; }
 
-.lang-switcher button {
-    width: 32px !important;
-    height: 22px !important;
-    font-size: 10px !important;
-    padding: 0 !important;
-    background: #e1e8ef !important;
-    color: var(--primary) !important;
-    border-radius: 4px;
-    margin: 0 !important;
-}
+h1 { font-size: 1.3rem; color: var(--primary); margin: 20px 0; }
+input, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
 
-h1 { font-size: 22px; color: var(--primary); margin: 15px 0 5px 0; }
-p { font-size: 14px; color: #666; margin-bottom: 10px; }
+button { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+button:hover { filter: brightness(1.1); }
 
+.secondary-btn { background: var(--gray) !important; margin-top: 8px; }
 
-input, select {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #dcdfe6;
-    border-radius: 10px;
-    box-sizing: border-box;
-    margin-bottom: 5px; /* Xanalar arasındakı boşluq */
-}
+/* Admin Panel Tab Sistemi */
+.admin-tabs { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 15px; }
+.admin-tabs button { flex: 1; padding: 8px 5px; font-size: 12px; }
 
-/* DÜYMƏLƏRİN SƏLİQƏSİ */
-button {
-    width: 100%;
-    padding: 14px;
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.3s;
-}
+.tab-content { background: #f9f9f9; padding: 15px; border-radius: 10px; min-height: 150px; text-align: left; }
+.section-header { display: flex; justify-content: space-between; align-items: center; }
+.btn-clear { width: auto; background: var(--danger); font-size: 11px; padding: 5px 10px; }
+.logout-btn { background: #555 !important; margin-top: 20px; }
 
-button:hover {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
-}
-
-.secondary-btn {
-    background-color: var(--gray) !important;
-    margin-top: 10px; 
-}
-
-/* ADMİN PANEL DETALLARI */
-.results-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.results-header h3 {
-    font-size: 16px;
-    color: var(--primary);
-    margin: 0;
-}
-
-.btn-clear {
-    width: auto !important;
-    padding: 6px 15px !important;
-    font-size: 12px !important;
-    background-color: var(--danger) !important;
-}
-
-.results-subheader {
-    text-align: left;
-    font-size: 13px;
-    color: #555;
-    padding-left: 5px;
-    border-left: 3px solid var(--primary);
-    margin: 10px 0;
-}
-
-.btn-logout {
-    background-color: var(--gray) !important;
-    margin-top: 20px !important;
-}
-
-/* FOOTER */
-.site-footer {
-    position: fixed;
-    bottom: 20px;
-    font-size: 13px;
-    color: var(--primary);
-    font-weight: 500;
-}
-
-.site-footer span { font-weight: bold; }
-
+.site-footer { position: fixed; bottom: 15px; font-size: 12px; color: var(--primary); }
 .hidden { display: none !important; }
-
-/* Sınaq daxili suallar üçün */
-.question {
-    text-align: left;
-    background: #f9fbfe;
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 10px;
-}
