@@ -21,7 +21,6 @@
 
     <div id="login-screen">
         <div id="student-login-area">
-            <div class="welcome-msg" id="msg-welcome">Şagird adı və parolu ilə giriş edin</div>
             <input type="text" id="student-username" placeholder="İstifadəçi adınız">
             <input type="password" id="student-pass" placeholder="Parolunuzu daxil edin">
             <button onclick="loginStudent()" id="btn-login">Giriş et</button>
@@ -33,8 +32,6 @@
             <select id="active-quizzes-select"></select>
             <button onclick="startQuiz()" id="btn-start-quiz">Sınağa Başla</button>
         </div>
-        
-        <button onclick="showLogin()" class="secondary-btn" id="btn-teacher-login">Müəllim Girişi</button>
     </div>
 
     <div id="quiz-screen" class="hidden">
@@ -65,10 +62,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th id="th-student">Şagird</th>
-                        <th id="th-correct">Düz</th>
-                        <th id="th-wrong">Səhv</th>
-                        <th id="th-date">Tarix</th>
+                        <th>Şagird</th>
+                        <th>Toplanan</th>
+                        <th>Maksimum</th>
+                        <th>Detallar</th>
                     </tr>
                 </thead>
                 <tbody id="results-body"></tbody>
