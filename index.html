@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nərminə Əmirbəyova | Tarix Sınaq</title>
+    <title>Tarix Sınaq Portalı</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -15,65 +17,40 @@
         </div>
 
         <div id="login-screen">
-            <h1>Nərminə Əmirbəyovanın sınaq portalı</h1>
-            <p>Giriş gözlənilir...</p>
+            <h1 id="h1-title">Nərminə Əmirbəyovanın sınaq portalı</h1>
+            <p id="p-status">Giriş gözlənilir...</p>
             
             <div id="student-login-area">
                 <input type="text" id="student-username" placeholder="İstifadəçi adınız">
                 <input type="password" id="student-pass" placeholder="Parolunuzu daxil edin">
-                <button id="btn-login" onclick="loginStudent()">Giriş et</button>
+                <button onclick="loginStudent()">Giriş et</button>
                 <button class="secondary-btn" onclick="showAdminLogin()">Müəllim Girişi</button>
             </div>
 
             <div id="quiz-selection-area" class="hidden">
-                <h3 id="welcome-student"></h3>
-                <select id="active-quizzes-select">
-                    <option value="">-- Sınaq seçin --</option>
+                <h3 id="welcome-msg"></h3>
+                <select id="quiz-select">
+                    <option value="" id="opt-select">-- Sınaq seçin --</option>
                 </select>
                 <button onclick="startQuiz()">Sınağa Başla</button>
+                <button class="secondary-btn" onclick="logout()">Çıxış</button>
             </div>
         </div>
 
         <div id="admin-login" class="hidden">
-            <h3>Müəllim Girişi</h3>
+            <h3 id="admin-title">Müəllim Girişi</h3>
             <input type="password" id="admin-password" placeholder="Admin Parolu">
             <button onclick="checkAdmin()">Daxil ol</button>
-            <button class="secondary-btn" onclick="hideLogin()">Geri</button>
+            <button class="secondary-btn" onclick="hideAdminLogin()">Geri</button>
         </div>
 
         <div id="admin-panel" class="hidden">
-            <div class="admin-nav">
-                <button onclick="openTab('results')">Nəticələr</button>
-                <button onclick="openTab('quizzes')">Sınaqlar</button>
-                <button onclick="openTab('students')">Şagirdlər</button>
-            </div>
-
             <div class="results-header">
-                <h3>Şagird Nəticələri</h3>
-                <button class="btn-clear" onclick="clearAllResults()">Təmizlə</button>
+                <h3 id="res-h3">Şagird Nəticələri</h3>
+                <button class="btn-clear" id="btn-clear" onclick="clearResults()">Təmizlə</button>
             </div>
-
-            <div class="results-subheader">
-                Şagird / Toplanan / Maksimum / Detallar
-            </div>
-
-            <div id="results-display">
-                </div>
-
-            <button class="btn-logout" onclick="logoutAdmin()">Çıxış</button>
-        </div>
-
-        <div id="quiz-screen" class="hidden">
-            <h2 id="current-quiz-title"></h2>
-            <div id="timer">Qalan Vaxt: --:--</div>
-            <div id="dynamic-questions"></div>
-            <button onclick="finishQuiz()">Sınağı Bitir</button>
-        </div>
-
-        <div id="result-screen" class="hidden">
-            <h2>İmtahan Bitdi!</h2>
-            <h1 id="final-score"></h1>
-            <button onclick="location.reload()">Ana Səhifəyə Qayıt</button>
+            <div id="results-display"></div>
+            <button class="secondary-btn" id="btn-logout-admin" onclick="logout()">Çıxış</button>
         </div>
     </div>
 
@@ -81,8 +58,6 @@
         Layihə rəhbəri: <span>Xədicə Abbaszadə</span>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
