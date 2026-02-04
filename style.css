@@ -2,32 +2,34 @@
     --primary: #1a4e8a;
     --white: #ffffff;
     --gray: #8492a6;
-    --light-bg: #f4f7f9;
+    --light-bg: #f0f5fa;
+    --danger: #c0392b;
 }
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
     background-color: var(--light-bg);
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    overflow: hidden; 
 }
 
 #quiz-container {
     background: var(--white);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    width: 95%;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    width: 90%;
     max-width: 450px;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Bütün elementlərin arasındakı ümumi məsafə */
+    gap: 15px; 
     text-align: center;
-    border-top: 6px solid var(--primary);
+    border-top: 8px solid var(--primary);
 }
 
 /* AZ / RU DÜYMƏLƏRİ */
@@ -50,17 +52,20 @@ body {
     margin: 0 !important;
 }
 
-/* GİRİŞ XANALARI (INPUTLAR) */
-input {
+h1 { font-size: 22px; color: var(--primary); margin: 15px 0 5px 0; }
+p { font-size: 14px; color: #666; margin-bottom: 10px; }
+
+
+input, select {
     width: 100%;
     padding: 14px;
     border: 1px solid #dcdfe6;
     border-radius: 10px;
     box-sizing: border-box;
-    margin-bottom: 5px; 
+    margin-bottom: 5px; /* Xanalar arasındakı boşluq */
 }
 
-/* DÜYMƏLƏR */
+/* DÜYMƏLƏRİN SƏLİQƏSİ */
 button {
     width: 100%;
     padding: 14px;
@@ -73,45 +78,69 @@ button {
     transition: 0.3s;
 }
 
+button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
 .secondary-btn {
     background-color: var(--gray) !important;
     margin-top: 10px; 
 }
 
-#admin-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding-top: 10px;
-}
-
-.admin-row {
+/* ADMİN PANEL DETALLARI */
+.results-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
-    margin-top: 15px;
-    text-align: left;
+    margin-top: 20px;
 }
 
-.admin-row h3 {
-    margin: 0;
+.results-header h3 {
     font-size: 16px;
     color: var(--primary);
+    margin: 0;
 }
 
-.admin-row button {
-    width: auto; 
-    padding: 8px 20px;
+.btn-clear {
+    width: auto !important;
+    padding: 6px 15px !important;
+    font-size: 12px !important;
+    background-color: var(--danger) !important;
 }
 
-/* Footer  */
+.results-subheader {
+    text-align: left;
+    font-size: 13px;
+    color: #555;
+    padding-left: 5px;
+    border-left: 3px solid var(--primary);
+    margin: 10px 0;
+}
+
+.btn-logout {
+    background-color: var(--gray) !important;
+    margin-top: 20px !important;
+}
+
+/* FOOTER */
 .site-footer {
     position: fixed;
     bottom: 20px;
-    color: var(--primary);
     font-size: 13px;
+    color: var(--primary);
     font-weight: 500;
 }
 
+.site-footer span { font-weight: bold; }
+
 .hidden { display: none !important; }
+
+/* Sınaq daxili suallar üçün */
+.question {
+    text-align: left;
+    background: #f9fbfe;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
