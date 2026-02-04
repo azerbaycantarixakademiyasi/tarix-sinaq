@@ -1,120 +1,106 @@
 :root {
-    --primary: #1a3c5a;    
-    --accent: #d4af37;     
-    --bg: #f8f9fa;        
+    --primary-blue: #1a4e8a; /* Professional tünd göy */
+    --light-blue: #e7f1ff;   /* Yumşaq göy fon */
     --white: #ffffff;
+    --text-dark: #2c3e50;
+    --gray: #f8f9fa;
 }
 
 body {
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--bg);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-blue);
     margin: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
-    overflow: hidden;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 #quiz-container {
     background: var(--white);
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-    width: 90%;
-    max-width: 420px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px; /* Admin paneli üçün ideal genişlik */
     display: flex;
     flex-direction: column;
-    gap: 15px; 
+    gap: 20px; /* Düymələr və inputlar arasında boşluq qoyur */
     text-align: center;
-    border-top: 5px solid var(--primary); 
+    border-top: 8px solid var(--primary-blue);
+}
+
+/* Üst-üstə düşməni ləğv edən əsas hissə */
+.hidden {
+    display: none !important;
 }
 
 h1 {
-    color: var(--primary);
+    color: var(--primary-blue);
+    margin: 0 0 10px 0;
     font-size: 24px;
-    margin-bottom: 5px;
-    font-weight: 700;
 }
 
-/* Giriş gözlənilir yazısı */
-h1 + p {
-    color: #6c757d;
-    margin-bottom: 10px;
-}
-
-input {
+input, select {
     width: 100%;
     padding: 14px;
-    border: 1px solid #dee2e6;
+    border: 2px solid #dee2e6;
     border-radius: 10px;
-    background: #fdfdfd;
+    font-size: 15px;
+    box-sizing: border-box; /* Daşmanın qarşısını alır */
     transition: 0.3s;
-    box-sizing: border-box;
 }
 
 input:focus {
-    border-color: var(--primary);
+    border-color: var(--primary-blue);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(26, 60, 90, 0.1);
 }
 
 button {
     width: 100%;
-    padding: 14px;
+    padding: 15px;
+    background-color: var(--primary-blue);
+    color: white;
     border: none;
     border-radius: 10px;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.3s;
 }
 
-/* Giriş Et Düyməsi */
-#btn-login, button:not(.secondary-btn):not(.lang-btn) {
-    background-color: var(--primary);
-    color: white;
-}
-
 button:hover {
     filter: brightness(1.2);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
-/* Müəllim Girişi Düyməsi */
+/* İkinci dərəcəli düymələr (Müəllim girişi, Geri və s.) */
 .secondary-btn {
-    background-color: #e9ecef;
-    color: var(--primary);
+    background-color: #6c757d;
     margin-top: 5px;
 }
 
-/* Dil Düymələri (AZ / RU) */
-.lang-switcher {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.lang-switcher button {
-    width: 50px;
-    padding: 6px;
-    font-size: 12px;
-    background: var(--primary);
-    color: white;
-}
-
-
-.site-footer {
-    position: absolute;
-    bottom: 30px;
+/* Admin Panel Cədvəli */
+table {
     width: 100%;
-    text-align: center;
-    color: #adb5bd;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    border-collapse: collapse;
+    margin-top: 15px;
 }
 
-.site-footer span {
-    color: var(--primary);
-    font-weight: bold;
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    font-size: 14px;
+}
+
+/* Footer (Layihə rəhbəri) */
+.site-footer {
+    margin-top: 30px;
+    color: var(--primary-blue);
+    font-weight: 500;
+    text-align: center;
 }
