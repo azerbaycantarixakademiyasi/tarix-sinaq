@@ -1,75 +1,69 @@
 :root {
-    --primary: #1a4e8a; 
-    --bg-light: #eef4fb;
+    --blue: #1a4e8a;
+    --light-bg: #f0f5fa;
     --white: #ffffff;
 }
 
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: var(--bg-light);
     margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--light-bg);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    overflow: hidden; /* Səhifə sürüşməsin (scroll olmasın) */
+    min-height: 100vh;
 }
 
 #quiz-container {
     background: var(--white);
-    padding: 40px 30px;
-    border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-    width: 100%;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 90%;
     max-width: 420px;
-    position: relative; /* Dil düymələrini sağa bərkitmək üçün */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; 
     text-align: center;
-    border-top: 8px solid var(--primary);
+    border-top: 6px solid var(--blue);
 }
 
-/* DİL DÜYMƏLƏRİ - İSTƏDİYİN KİMİ BALACA */
+/* AZ/RU DÜYMƏLƏRİ */
 .lang-switcher {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 10px;
+    right: 10px;
     display: flex;
     gap: 5px;
 }
 
 .lang-switcher button {
-    width: 35px !important; /* Çox balaca */
-    height: 25px !important;
+    width: 30px !important;
+    height: 22px !important;
     padding: 0 !important;
     font-size: 10px !important;
-    background: #cbdcf0 !important;
-    color: var(--primary) !important;
-    border-radius: 5px !important;
+    background: #e1e8ef !important;
+    color: var(--blue) !important;
+    border-radius: 4px;
+    margin: 0 !important;
 }
 
-h1 {
-    color: var(--primary);
-    font-size: 22px;
-    margin: 15px 0 5px 0;
-}
+h1 { font-size: 20px; color: var(--blue); margin: 20px 0 5px 0; }
+p { font-size: 14px; color: #666; margin: 0 0 10px 0; }
 
-p { color: #666; margin-bottom: 20px; }
-
-/* İnputlar arasında məsafə */
 input {
     width: 100%;
     padding: 12px;
-    margin-bottom: 12px; /* İnputlar arasını açır */
     border: 1px solid #ddd;
     border-radius: 8px;
     box-sizing: border-box;
 }
 
-/* Əsas Düymələr */
 button {
     width: 100%;
     padding: 12px;
-    margin-top: 8px; /* Düymələr arasını açır */
-    background-color: var(--primary);
+    background: var(--blue);
     color: white;
     border: none;
     border-radius: 8px;
@@ -78,17 +72,22 @@ button {
     transition: 0.3s;
 }
 
-.secondary-btn {
-    background-color: #7f8c8d !important;
+.secondary-btn { background: #7f8c8d; }
+
+/* Admin panelindəki cədvəllər və suallar üçün */
+.q-editor-card {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid #eee;
 }
 
-/* Footer tam mərkəzdə və aşağıda */
 .site-footer {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
-    width: 100%;
-    text-align: center;
-    font-size: 13px;
-    color: var(--primary);
-    font-weight: 500;
+    font-size: 12px;
+    color: var(--blue);
 }
+
+.hidden { display: none !important; }
