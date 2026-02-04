@@ -30,10 +30,6 @@ const translations = {
         tabStudents: "Şagirdlər",
         resultsTitle: "Şagird Nəticələri",
         clearBtn: "Təmizlə",
-        thStudent: "Şagird",
-        thCorrect: "Düz",
-        thWrong: "Səhv",
-        thDate: "Tarix",
         quizTitlePlace: "Sınaq Başlığı",
         quizTimePlace: "Müddət (dəqiqə)",
         addQ: "+ Yeni Sual",
@@ -48,7 +44,7 @@ const translations = {
         quizFinished: "Sınaq Bitdi!",
         closeBtn: "Bağla",
         footer: "Layihə rəhbəri: ",
-        alertPass: "Giriş məlumatları yanlışdır!",
+        alertPass: "Məlumatlar yanlışdır!",
         confirmClear: "Nəticələr silinsin?",
         confirmDelete: "Sınaq silinsin?",
         active: "Aktiv",
@@ -72,10 +68,6 @@ const translations = {
         tabStudents: "Ученики",
         resultsTitle: "Результаты учеников",
         clearBtn: "Очистить",
-        thStudent: "Ученик",
-        thCorrect: "Верно",
-        thWrong: "Неверно",
-        thDate: "Дата",
         quizTitlePlace: "Заголовок теста",
         quizTimePlace: "Время (минуты)",
         addQ: "+ Новый вопрос",
@@ -90,7 +82,7 @@ const translations = {
         quizFinished: "Тест завершен!",
         closeBtn: "Закрыть",
         footer: "Руководитель проекта: ",
-        alertPass: "Данные для входа неверны!",
+        alertPass: "Данные неверны!",
         confirmClear: "Удалить результаты?",
         confirmDelete: "Удалить тест?",
         active: "Активен",
@@ -101,39 +93,33 @@ const translations = {
 let activeLang = localStorage.getItem('selectedLang') || 'az';
 let activeQuizData = null;
 let currentStudent = null;
-let currentQuestionsCount = 0;
+let qCounter = 0; // Dinamik sual ID-si üçün
 let timeLeft = 0;
 let timerInterval;
 
-window.onload = function() {
-    changeLang(activeLang);
-    initApp();
-};
+window.onload = () => { changeLang(activeLang); initApp(); };
 
 function initApp() {
-    document.getElementById('quiz-selection-area').classList.add('hidden');
-    document.getElementById('quiz-screen').classList.add('hidden');
-    document.getElementById('admin-login').classList.add('hidden');
-    document.getElementById('admin-panel').classList.add('hidden');
-    document.getElementById('result-screen').classList.add('hidden');
+    ["quiz-selection-area", "quiz-screen", "admin-login", "admin-panel", "result-screen"]
+    .forEach(id => document.getElementById(id).classList.add('hidden'));
 }
 
 function changeLang(lang) {
     activeLang = lang;
     localStorage.setItem('selectedLang', lang);
     const t = translations[lang];
-    
     document.getElementById('site-title').innerText = t.siteTitle;
     document.getElementById('msg-welcome').innerText = t.welcomeMsg;
-    document.getElementById('student-username').placeholder = t.namePlaceholder;
-    document.getElementById('student-pass').placeholder = t.passPlaceholder;
+    document.querySelectorAll('input').forEach(inp => {
+        if(inp.id === "student-username") inp.placeholder = t.namePlaceholder;
+        if(inp.id === "student-pass" || inp.id === "admin-password") inp.placeholder = t.passPlaceholder;
+    });
     document.getElementById('btn-login').innerText = t.loginBtn;
     document.getElementById('btn-teacher-login').innerText = t.teacherLogin;
     document.getElementById('msg-select-quiz').innerText = t.selectQuiz;
     document.getElementById('btn-start-quiz').innerText = t.startBtn;
     document.getElementById('btn-finish-quiz').innerText = t.finishBtn;
     document.getElementById('admin-login-title').innerText = t.adminLogin;
-    document.getElementById('admin-password').placeholder = t.passPlaceholder;
     document.getElementById('btn-admin-enter').innerText = t.loginBtn;
     document.getElementById('btn-back').innerText = t.adminBack;
     document.getElementById('tab-results').innerText = t.tabResults;
@@ -141,10 +127,6 @@ function changeLang(lang) {
     document.getElementById('tab-students').innerText = t.tabStudents;
     document.getElementById('title-results').innerText = t.resultsTitle;
     document.getElementById('btn-clear-results').innerText = t.clearBtn;
-    document.getElementById('th-student').innerText = t.thStudent;
-    document.getElementById('th-correct').innerText = t.thCorrect;
-    document.getElementById('th-wrong').innerText = t.thWrong;
-    document.getElementById('th-date').innerText = t.thDate;
     document.getElementById('new-quiz-name').placeholder = t.quizTitlePlace;
     document.getElementById('new-quiz-time').placeholder = t.quizTimePlace;
     document.getElementById('btn-add-q').innerText = t.addQ;
@@ -163,245 +145,199 @@ function changeLang(lang) {
 
 // ŞAGİRD GİRİŞİ
 function loginStudent() {
-    const inputName = document.getElementById('student-username').value.trim();
-    const inputPass = document.getElementById('student-pass').value.trim();
-
-    database.ref('students').once('value').then((snapshot) => {
+    const user = document.getElementById('student-username').value.trim();
+    const pass = document.getElementById('student-pass').value.trim();
+    database.ref('students').once('value').then(snap => {
         let found = false;
-        snapshot.forEach((child) => {
-            const data = child.val();
-            if (data.name === inputName && data.password === inputPass) {
-                currentStudent = { id: child.key, ...data };
-                found = true;
-            }
+        snap.forEach(c => {
+            const d = c.val();
+            if(d.name === user && d.password === pass) { found = true; currentStudent = d; }
         });
-
-        if (found) {
+        if(found) {
             document.getElementById('student-login-area').classList.add('hidden');
             document.getElementById('quiz-selection-area').classList.remove('hidden');
             document.getElementById('welcome-student').innerText = (activeLang === 'az' ? 'Xoş gəldin, ' : 'Добро пожаловать, ') + currentStudent.name;
             loadAvailableQuizzes();
-        } else { 
-            alert(translations[activeLang].alertPass); 
-        }
+        } else { alert(translations[activeLang].alertPass); }
     });
 }
 
 function loadAvailableQuizzes() {
-    const select = document.getElementById('active-quizzes-select');
-    database.ref('quizzes').on('value', (snap) => {
-        select.innerHTML = `<option value="">-- ${activeLang === 'az' ? 'Sınaq seçin' : 'Выберите тест'} --</option>`;
-        snap.forEach((child) => {
-            const q = child.val();
-            if (q.status === "active") {
-                select.innerHTML += `<option value="${child.key}">${q.title} (${q.sure} min)</option>`;
-            }
-        });
+    const sel = document.getElementById('active-quizzes-select');
+    database.ref('quizzes').on('value', snap => {
+        sel.innerHTML = `<option value="">-- ${activeLang === 'az' ? 'Seçin' : 'Выбор'} --</option>`;
+        snap.forEach(c => { if(c.val().status === "active") sel.innerHTML += `<option value="${c.key}">${c.val().title}</option>`; });
     });
 }
 
 function startQuiz() {
-    const qId = document.getElementById('active-quizzes-select').value;
-    if (!qId) return;
-    database.ref('quizzes/' + qId).once('value', (snap) => {
+    const id = document.getElementById('active-quizzes-select').value;
+    if(!id) return;
+    database.ref('quizzes/' + id).once('value', snap => {
         activeQuizData = snap.val();
         timeLeft = activeQuizData.sure * 60;
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('quiz-screen').classList.remove('hidden');
         document.getElementById('current-quiz-title').innerText = activeQuizData.title;
         renderQuestions();
-        timerInterval = setInterval(updateTimer, 1000);
+        timerInterval = setInterval(() => {
+            let m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+            document.getElementById('timer').innerText = translations[activeLang].timer + `${m}:${s<10?'0':''}${s}`;
+            if(timeLeft-- <= 0) finishQuiz();
+        }, 1000);
     });
-}
-
-function updateTimer() {
-    let min = Math.floor(timeLeft / 60);
-    let sec = timeLeft % 60;
-    document.getElementById('timer').innerText = translations[activeLang].timer + `${min}:${sec < 10 ? '0' : ''}${sec}`;
-    if (timeLeft-- <= 0) finishQuiz();
 }
 
 function renderQuestions() {
-    const container = document.getElementById('dynamic-questions');
-    container.innerHTML = "";
+    const div = document.getElementById('dynamic-questions'); div.innerHTML = "";
     activeQuizData.questions.forEach((q, i) => {
-        let opts = q.variantlar.map(v => `<label style="display:block; margin:8px 0; cursor:pointer;"><input type="radio" name="q${i}" value="${v === q.dogru ? 1 : 0}"> ${v}</label>`).join("");
-        container.innerHTML += `<div class="question">
-            <p><strong>${i+1}. ${q.sual}</strong></p>${opts}</div>`;
+        let opts = q.variantlar.map(v => `<label style="display:block;margin:8px 0;"><input type="radio" name="q${i}" value="${v}"> ${v}</label>`).join("");
+        div.innerHTML += `<div class="question"><p><strong>${i+1}. ${q.sual} (${q.bal} Bal)</strong></p>${opts}</div>`;
     });
 }
 
-// ŞAGİRD İMTAHANI BİTİRƏNDƏ
 function finishQuiz() {
     clearInterval(timerInterval);
-    let correct = 0;
-    let detailReports = [];
-
+    let score = 0, max = 0, details = [];
     activeQuizData.questions.forEach((q, i) => {
         const sel = document.querySelector(`input[name="q${i}"]:checked`);
-        const userVal = sel ? sel.parentElement.innerText.trim() : "Cavab verilməyib";
-        const isTrue = sel && parseInt(sel.value) === 1;
-
-        if (isTrue) correct++;
-
-        detailReports.push({
-            sual: q.sual,
-            sagird_cavab: userVal,
-            duzgun_cavab: q.dogru,
-            netice: isTrue ? "Düz" : "Səhv"
-        });
+        const userVal = sel ? sel.value : "Bosh";
+        const isCorrect = userVal === q.dogru;
+        max += parseInt(q.bal);
+        if(isCorrect) score += parseInt(q.bal);
+        details.push({ sual: q.sual, user: userVal, correct: q.dogru, point: isCorrect ? q.bal : 0 });
     });
-
-    database.ref('imtahan_neticeleri').push({ 
-        adSoyad: currentStudent.name, 
-        duz: correct, 
-        sehv: activeQuizData.questions.length - correct, 
-        sinaqAdi: activeQuizData.title, 
-        tarix: new Date().toLocaleString(),
-        detallar: detailReports // Müəllim üçün detallar
-    });
-
+    database.ref('imtahan_neticeleri').push({ adSoyad: currentStudent.name, toplanan: score, maks: max, detal: details });
     document.getElementById('quiz-screen').classList.add('hidden');
     document.getElementById('result-screen').classList.remove('hidden');
-    document.getElementById('final-score').innerText = `${correct} / ${activeQuizData.questions.length}`;
+    document.getElementById('final-score').innerText = `Nəticə: ${score} / ${max} Bal`;
 }
 
-// ADMİN PANEL FUNKSİYALARI
+// ADMİN PANEL
 function checkAdmin() {
-    const inputP = document.getElementById('admin-password').value;
-    if (inputP === "nermine2025" || inputP === "xedice2026") {
+    const p = document.getElementById('admin-password').value;
+    if(p === "nermine2025" || p === "xedice2026") {
         document.getElementById('admin-login').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
-        loadResults();
-        loadAllQuizzes();
-        loadStudentList();
-    } else { 
-        alert(translations[activeLang].alertPass); 
-    }
-}
-
-function loadResults() {
-    database.ref('imtahan_neticeleri').on('value', snap => {
-        const b = document.getElementById('results-body'); 
-        b.innerHTML = "";
-        snap.forEach(c => { 
-            const v = c.val(); 
-            // Detalları görmək üçün düymə
-            const resData = JSON.stringify(v.detallar).replace(/'/g, "&apos;");
-            const detailBtn = `<button onclick='showDetail(\`${resData}\`)' style="width:auto; padding:5px; background:var(--warning); font-size:12px;">Bax</button>`;
-            
-            b.innerHTML += `<tr>
-                <td>${v.adSoyad}</td>
-                <td>${v.duz}</td>
-                <td>${v.sehv}</td>
-                <td>${detailBtn}</td>
-            </tr>`; 
-        });
-    });
-}
-
-function showDetail(jsonStr) {
-    const details = JSON.parse(jsonStr);
-    let msg = "İmtahan Detalları:\n\n";
-    details.forEach((d, i) => {
-        msg += `${i+1}. ${d.sual}\n   Şagird: ${d.sagird_cavab}\n   Düzgün: ${d.duzgun_cavab}\n   Durum: ${d.netice}\n\n`;
-    });
-    alert(msg);
-}
-
-function openTab(id) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.remove('hidden');
-    event.currentTarget.classList.add('active');
+        loadResults(); loadAllQuizzes(); loadStudentList();
+    } else { alert("Yanlış parol!"); }
 }
 
 function addNewQuestionRow() {
-    currentQuestionsCount++;
+    qCounter++;
+    const container = document.getElementById('question-inputs');
     const div = document.createElement('div');
-    div.className = 'q-row';
-    div.style.borderBottom = "1px solid #eee";
-    div.style.padding = "10px 0";
-    div.innerHTML = `<input type="text" class="q-text" placeholder="Sual"><br>
-        <input type="radio" name="c${currentQuestionsCount}" value="A" checked> <input type="text" class="opt-a" placeholder="A variantı"><br>
-        <input type="radio" name="c${currentQuestionsCount}" value="B"> <input type="text" class="opt-b" placeholder="B variantı"><br>
-        <input type="radio" name="c${currentQuestionsCount}" value="C"> <input type="text" class="opt-c" placeholder="C variantı">`;
-    document.getElementById('question-inputs').appendChild(div);
+    div.className = "q-editor-card";
+    div.style = "background:#f9f9f9; padding:15px; border-radius:10px; margin-bottom:15px; border:1px solid #ddd;";
+    div.innerHTML = `
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <strong>Sual ${qCounter}</strong>
+            <input type="number" class="q-bal" placeholder="Bal" style="width:60px; margin:0;" value="5">
+        </div>
+        <input type="text" class="q-txt" placeholder="Sualı yazın" style="margin-bottom:10px;">
+        <div id="opts-${qCounter}" class="opts-list">
+            <div style="display:flex; gap:10px; margin-bottom:5px;">
+                <input type="radio" name="correct_${qCounter}" value="0" checked>
+                <input type="text" class="opt-txt" placeholder="Variant 1">
+            </div>
+        </div>
+        <button onclick="addOpt(${qCounter})" style="width:auto; padding:5px 10px; background:#27ae60; font-size:12px;">+ Variant</button>
+    `;
+    container.appendChild(div);
+}
+
+function addOpt(id) {
+    const cont = document.getElementById(`opts-${id}`);
+    const idx = cont.children.length;
+    const div = document.createElement('div');
+    div.style = "display:flex; gap:10px; margin-bottom:5px;";
+    div.innerHTML = `<input type="radio" name="correct_${id}" value="${idx}"><input type="text" class="opt-txt" placeholder="Variant ${idx+1}">`;
+    cont.appendChild(div);
 }
 
 function saveNewQuiz() {
     const title = document.getElementById('new-quiz-name').value;
     const sure = document.getElementById('new-quiz-time').value;
     let questions = [];
-    document.querySelectorAll('.q-row').forEach((row) => {
-        const a = row.querySelector('.opt-a').value;
-        const b = row.querySelector('.opt-b').value;
-        const c = row.querySelector('.opt-c').value;
-        const selVal = row.querySelector(`input[type="radio"]:checked`).value;
-        let correctVal = (selVal === "A" ? a : selVal === "B" ? b : c);
-
-        questions.push({ 
-            sual: row.querySelector('.q-text').value, 
-            dogru: correctVal, 
-            variantlar: [a, b, c] 
+    document.querySelectorAll('.q-editor-card').forEach(card => {
+        const txt = card.querySelector('.q-txt').value;
+        const bal = card.querySelector('.q-bal').value;
+        const rows = card.querySelectorAll('.opt-txt');
+        const correctIdx = card.querySelector('input[type="radio"]:checked').value;
+        let variants = [], correctVal = "";
+        rows.forEach((r, i) => { 
+            variants.push(r.value);
+            if(i == correctIdx) correctVal = r.value;
         });
+        questions.push({ sual: txt, dogru: correctVal, variantlar: variants, bal: bal });
     });
-    database.ref('quizzes').push({ title, sure, questions, status: "inactive" }).then(() => { 
-        alert("Sınaq arxivə yazıldı!"); 
-        location.reload(); 
+    database.ref('quizzes').push({ title, sure, questions, status: "inactive" }).then(() => location.reload());
+}
+
+function loadResults() {
+    database.ref('imtahan_neticeleri').on('value', snap => {
+        const body = document.getElementById('results-body'); body.innerHTML = "";
+        snap.forEach(c => {
+            const v = c.val();
+            body.innerHTML += `<tr>
+                <td>${v.adSoyad}</td>
+                <td>${v.toplanan}</td>
+                <td>${v.maks}</td>
+                <td><button onclick="showResDetail('${c.key}')" style="width:auto; padding:5px; background:orange;">Bax</button></td>
+            </tr>`;
+        });
     });
 }
 
+function showResDetail(key) {
+    database.ref('imtahan_neticeleri/'+key).once('value').then(snap => {
+        const v = snap.val();
+        let msg = `${v.adSoyad} üçün detallar:\n\n`;
+        v.detal.forEach((d, i) => {
+            msg += `${i+1}. ${d.sual}\n   Cavab: ${d.user}\n   Düzgün: ${d.correct}\n   Bal: ${d.point}\n\n`;
+        });
+        alert(msg);
+    });
+}
+
+// DİGƏR FUNKSİYALAR (Siyahılar)
 function loadAllQuizzes() {
     const list = document.getElementById('all-quizzes-list');
     database.ref('quizzes').on('value', snap => {
         list.innerHTML = "";
-        snap.forEach(child => {
-            const q = child.val();
-            const active = q.status === "active";
-            list.innerHTML += `<div class="quiz-card">
-                <span>${q.title}</span>
-                <div>
-                    <button onclick="toggleStatus('${child.key}','${q.status}')" class="${active?'btn-status-active':'btn-status-inactive'}">
-                        ${active ? translations[activeLang].deactive : translations[activeLang].active}
-                    </button>
-                    <button onclick="deleteQuiz('${child.key}')" class="btn-delete">Sil</button>
-                </div>
-            </div>`;
+        snap.forEach(c => {
+            const q = c.val();
+            list.innerHTML += `<div class="quiz-card"><span>${q.title}</span>
+                <div><button onclick="toggleQ('${c.key}','${q.status}')">${q.status==='active'?'Deaktiv':'Aktiv'}</button>
+                <button onclick="delQ('${c.key}')" class="btn-delete">Sil</button></div></div>`;
         });
     });
 }
-
-function toggleStatus(id, s) { database.ref(`quizzes/${id}/status`).set(s==="active"?"inactive":"active"); }
-function deleteQuiz(id) { if(confirm(translations[activeLang].confirmDelete)) database.ref(`quizzes/${id}`).remove(); }
-
+function toggleQ(id, s) { database.ref(`quizzes/${id}/status`).set(s==='active'?'inactive':'active'); }
+function delQ(id) { if(confirm("Silinsin?")) database.ref(`quizzes/${id}`).remove(); }
 function addNewStudent() {
-    const name = document.getElementById('new-student-name').value.trim();
-    const pass = document.getElementById('new-student-pass').value.trim();
-    if(name && pass) {
-        database.ref('students').push({ name, password: pass }).then(() => {
-            alert("Şagird əlavə edildi!");
-            document.getElementById('new-student-name').value = "";
-            document.getElementById('new-student-pass').value = "";
-        });
-    }
+    const n = document.getElementById('new-student-name').value;
+    const p = document.getElementById('new-student-pass').value;
+    if(n && p) database.ref('students').push({ name: n, password: p }).then(() => { 
+        document.getElementById('new-student-name').value = ""; 
+        document.getElementById('new-student-pass').value = ""; 
+    });
 }
-
 function loadStudentList() {
     const div = document.getElementById('student-list-display');
     database.ref('students').on('value', snap => {
         div.innerHTML = "";
-        snap.forEach(c => { 
-            div.innerHTML += `<div class="quiz-card">
-                <span>${c.val().name} (P: ${c.val().password})</span>
-                <button onclick="deleteStudent('${c.key}')" class="btn-delete" style="width:auto; padding:5px;">Sil</button>
-            </div>`; 
-        });
+        snap.forEach(c => { div.innerHTML += `<div class="quiz-card"><span>${c.val().name}</span><button onclick="delS('${c.key}')" class="btn-delete">Sil</button></div>`; });
     });
 }
-
-function deleteStudent(id) { if(confirm("Şagirdi silmək istəyirsiniz?")) database.ref(`students/${id}`).remove(); }
-function clearAllResults() { if(confirm(translations[activeLang].confirmClear)) database.ref('imtahan_neticeleri').set(null); }
+function delS(id) { if(confirm("Silinsin?")) database.ref(`students/${id}`).remove(); }
+function openTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.remove('hidden');
+    event.currentTarget.classList.add('active');
+}
+function clearAllResults() { if(confirm("Təmizlənsin?")) database.ref('imtahan_neticeleri').remove(); }
 function showLogin() { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('admin-login').classList.remove('hidden'); }
 function hideLogin() { document.getElementById('admin-login').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }
 function logoutAdmin() { location.reload(); }
