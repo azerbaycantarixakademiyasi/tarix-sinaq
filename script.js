@@ -31,7 +31,7 @@ function initApp() {
 // 1. MÜƏLLİMƏ GİRİŞİ 
 function checkAdmin() {
     const p = document.getElementById('admin-password').value;
-    if(p === "nermine2025" || p === "xedice2026") {
+    if(p === "nermine2026" || p === "xedice2026") {
         document.getElementById('admin-login').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
         
@@ -148,7 +148,7 @@ function finishQuiz() {
     document.getElementById('final-score').innerText = `Nəticə: ${totalScore} / ${maxPossible} Bal`;
 }
 
-// 5. ADMİN PANEL: SUAL YARATMA (Dinamik Variantlar)
+// 5. ADMİN PANEL: 
 function addNewQuestionRow() {
     qCounter++;
     const container = document.getElementById('question-inputs');
