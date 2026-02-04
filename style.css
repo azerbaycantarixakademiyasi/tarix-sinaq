@@ -1,169 +1,109 @@
-:root {
-    --primary-color: #1a5f7a; 
-    --accent-color: #c7802d;  
-    --bg-color: #f4f7f6;
-    --text-color: #2c3e50;
-    --white: #ffffff;
-    --shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
 body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 20px;
+    height: 100vh;
+    margin: 0;
 }
 
 #quiz-container {
-    background: var(--white);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+}
+
+input, select {
     width: 100%;
-    max-width: 550px;
-    padding: 35px;
-    border-radius: 25px;
-    box-shadow: var(--shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 20px; /* Elementlər arasındakı məsafə */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-.header h1 {
-    color: var(--primary-color);
-    font-size: 26px;
-    text-align: center;
-    margin-bottom: 5px;
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
-.header p {
-    text-align: center;
-    color: #7f8c8d;
-    font-size: 14px;
+button:hover {
+    background-color: #2980b9;
 }
 
-/* Dil Düymələri */
+.secondary-btn {
+    background-color: #95a5a6;
+    margin-top: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
 .lang-switcher {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
+    margin-bottom: 10px;
+    text-align: right;
 }
 
 .lang-switcher button {
     width: auto;
-    padding: 6px 15px;
-    background: #eee;
-    color: var(--text-color);
+    padding: 5px 10px;
     font-size: 12px;
 }
 
-/* İnputlar */
-input[type="text"], input[type="password"], input[type="number"], select {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid #eef0f2;
-    border-radius: 12px;
-    outline: none;
-    transition: 0.3s;
-}
-
-input:focus {
-    border-color: var(--primary-color);
-}
-
-/* Düymələr */
-button {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 16px;
-    transition: all 0.3s ease;
-    background-color: var(--primary-color);
-    color: white;
-}
-
-button:hover {
-    filter: brightness(1.2);
-    transform: translateY(-2px);
-}
-
-.secondary-btn {
-    background-color: #ecf0f1;
-    color: var(--primary-color);
-    margin-top: 10px;
-}
-
-/* Admin Panel Tabları */
 .tabs {
     display: flex;
-    gap: 5px;
-    background: #f8f9fa;
-    padding: 5px;
-    border-radius: 15px;
+    justify-content: space-around;
+    margin-bottom: 20px;
 }
 
 .tab-btn {
-    background: transparent;
-    color: #7f8c8d;
-    padding: 10px;
-    font-size: 14px;
+    background: none;
+    color: #333;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    width: auto;
 }
 
 .tab-btn.active {
-    background: var(--white);
-    color: var(--primary-color);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    border-bottom: 2px solid #3498db;
+    color: #3498db;
 }
-
-/* Sual və Nəticə Kartları */
-.question, .quiz-card {
-    background: #fdfdfd;
-    border: 1px solid #edf2f7;
-    padding: 20px;
-    border-radius: 18px;
-    margin-bottom: 15px;
-}
-
-.hidden { display: none !important; }
-
-.site-footer {
-    margin-top: 30px;
-    text-align: center;
-    font-size: 14px;
-}
-
-.site-footer span {
-    font-weight: bold;
-    color: var(--accent-color);
-}
-
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
-th {
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
     text-align: left;
-    padding: 10px;
-    border-bottom: 2px solid #eee;
-    font-size: 13px;
-    color: #7f8c8d;
 }
 
-td {
-    padding: 12px 10px;
-    border-bottom: 1px solid #f9f9f9;
-    font-size: 14px;
+.quiz-card {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    width: auto;
+    padding: 5px 10px;
 }
