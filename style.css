@@ -1,27 +1,25 @@
 body {
-    font-family: 'Georgia', serif; /* Tarixi və ciddi ruh üçün */
-    background-color: #f2e9d9; /* Köhnə kağız rəngi */
+    font-family: 'Georgia', serif;
+    background-color: #f2e9d9;
     margin: 0;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding: 40px 20px;
+    justify-content: center; 
+    align-items: center;  
+    height: 100vh;        
+    overflow: hidden;       
 }
 
 #quiz-container {
-    background: #fffcf5; /* Parşömen rəngi */
-    padding: 30px;
+    background: #fffcf5;
+    padding: 25px;
     border-radius: 15px;
-    border: 2px solid #d4a373; /* Qədim çərçivə rəngi */
+    border: 2px solid #d4a373;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    width: 100%;
-    max-width: 450px;
+    width: 90%;
+    max-width: 420px;
+    max-height: 90vh;     
+    overflow-y: auto;       
     text-align: center;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
 /* Dil düymələrini sağ yuxarıda səliqəli yerləşdiririk */
