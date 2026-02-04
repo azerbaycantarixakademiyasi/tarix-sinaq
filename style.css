@@ -57,15 +57,15 @@ h1 {
     margin: 15px 0 5px 0;
 }
 
-input, select {
+input {
     width: 100%;
     padding: 14px;
     border: 1px solid #dcdfe6;
     border-radius: 10px;
     font-size: 15px;
     box-sizing: border-box;
+    margin-bottom: 15px; 
 }
-
 /* Düymələr və onların sıxlığını düzəldən hissə */
 button {
     width: 100%;
