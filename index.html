@@ -41,42 +41,33 @@
                 <button onclick="showTab('quizzes-section')">Sınaqlar</button>
                 <button onclick="showTab('students-section')">Şagirdlər</button>
             </div>
-
             <hr>
-
             <div id="results-section" class="tab-content">
-                <div class="section-header">
-                    <h3>Nəticələr</h3>
-                    <button class="btn-clear" onclick="clearResults()">Təmizlə</button>
-                </div>
+                <div class="section-header"><h3>Nəticələr</h3></div>
                 <div id="results-display"></div>
             </div>
-
             <div id="quizzes-section" class="tab-content hidden">
                 <h3>Yeni Sınaq Yaradın</h3>
                 <input type="text" id="quiz-title" placeholder="Sınaq Başlığı">
                 <input type="number" id="quiz-time" placeholder="Müddət (dəq)">
                 <div id="questions-area"></div>
-                <button class="variant-add-btn" onclick="addQuestionField()">+ Yeni Sual Əlavə Et</button>
-                <button class="save-btn" onclick="saveQuiz()">Sınağı Arxivə Yaz</button>
+                <button class="variant-add-btn" onclick="addQuestionField()">+ Yeni Sual</button>
+                <button class="save-btn" onclick="saveQuiz()">Arxivə Yaz</button>
             </div>
-
             <div id="students-section" class="tab-content hidden">
                 <h3>Şagird Əlavə Et</h3>
                 <input type="text" id="new-std-name" placeholder="Ad Soyad">
                 <input type="text" id="new-std-pass" placeholder="Parol">
-                <button onclick="addStudent()">Şagirdi Bazaya Yaz</button>
-                <hr>
+                <button onclick="addStudent()">Yadda Saxla</button>
                 <div id="students-list"></div>
             </div>
-
             <button class="logout-btn" onclick="logout()">Sistemdən Çıxış</button>
         </div>
     </div>
 
     <div id="details-modal" class="hidden modal-overlay">
         <div class="modal-box">
-            <h3>Şagirdin Cavabları</h3>
+            <h3>Detallar</h3>
             <div id="modal-content"></div>
             <button onclick="closeModal()">Bağla</button>
         </div>
