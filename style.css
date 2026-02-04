@@ -1,15 +1,14 @@
 :root {
-    --primary: #1a4e8a;    
-    --accent: #2980b9;     /* Açıq göy */
-    --bg: #f0f5fa;        
+    --primary: #1a4e8a;
     --white: #ffffff;
-    --gray: #8492a6;       /* Müəllim girişi üçün boz */
+    --gray: #8492a6;
+    --light-bg: #f4f7f9;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-    background-color: var(--bg);
     margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--light-bg);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -18,55 +17,50 @@ body {
 
 #quiz-container {
     background: var(--white);
-    padding: 35px;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-    width: 90%;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    width: 95%;
     max-width: 450px;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 12px; 
+    gap: 15px; /* Bütün elementlərin arasındakı ümumi məsafə */
     text-align: center;
-    border-top: 8px solid var(--primary);
+    border-top: 6px solid var(--primary);
 }
 
-/* AZ / RU düymələri  */
+/* AZ / RU DÜYMƏLƏRİ */
 .lang-switcher {
     position: absolute;
     top: 15px;
     right: 15px;
     display: flex;
-    gap: 6px;
+    gap: 5px;
 }
 
 .lang-switcher button {
-    width: 35px !important;
-    height: 24px !important;
-    padding: 0 !important;
+    width: 32px !important;
+    height: 22px !important;
     font-size: 10px !important;
+    padding: 0 !important;
     background: #e1e8ef !important;
     color: var(--primary) !important;
-    border-radius: 5px;
+    border-radius: 4px;
     margin: 0 !important;
 }
 
-h1 {
-    color: var(--primary);
-    font-size: 22px;
-    margin: 15px 0 5px 0;
-}
-
+/* GİRİŞ XANALARI (INPUTLAR) */
 input {
     width: 100%;
     padding: 14px;
     border: 1px solid #dcdfe6;
     border-radius: 10px;
-    font-size: 15px;
     box-sizing: border-box;
-    margin-bottom: 15px; 
+    margin-bottom: 5px; 
 }
-/* Düymələr və onların sıxlığını düzəldən hissə */
+
+/* DÜYMƏLƏR */
 button {
     width: 100%;
     padding: 14px;
@@ -75,19 +69,8 @@ button {
     border: none;
     border-radius: 10px;
     font-weight: 600;
-    font-size: 16px;
     cursor: pointer;
     transition: 0.3s;
-}
-
-button:hover {
-    filter: brightness(1.1);
-    transform: translateY(-1px);
-}
-
-/* Giriş Et və Müəllim Girişi arasındakı boşluq */
-#btn-login {
-    margin-bottom: 5px;
 }
 
 .secondary-btn {
@@ -95,21 +78,37 @@ button:hover {
     margin-top: 10px; 
 }
 
-/* Admin Panel üçün Table və Card dizaynı */
-.q-editor-card {
-    background: #f9fbfe;
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid #e2e8f0;
-    text-align: left;
-    margin-top: 10px;
+#admin-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 10px;
 }
 
+.admin-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    text-align: left;
+}
+
+.admin-row h3 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--primary);
+}
+
+.admin-row button {
+    width: auto; 
+    padding: 8px 20px;
+}
+
+/* Footer  */
 .site-footer {
     position: fixed;
     bottom: 20px;
-    width: 100%;
-    text-align: center;
     color: var(--primary);
     font-size: 13px;
     font-weight: 500;
