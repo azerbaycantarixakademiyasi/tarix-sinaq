@@ -1,59 +1,48 @@
-// 1. DİL OBYEKTİ 
-const translations = {
-    az: { title: "Nərminə Əmirbəyovanın sınaq portalı", waiting: "Giriş gözlənilir...", userPlace: "İstifadəçi adınız", passPlace: "Parolunuzu daxil edin", loginBtn: "Giriş et", adminBtn: "Müəllim Girişi", welcome: "Xoş gəldin", selectQuiz: "-- Sınaq seçin --", startBtn: "Sınağa Başla", logout: "Çıxış", adminTitle: "Müəllim Girişi", adminPass: "Admin Parolu", adminEnter: "Daxil ol", back: "Geri", resTitle: "Şagird Nəticələri", clear: "Təmizlə", wrong: "Məlumatlar yanlışdır!" },
-    ru: { title: "Экзаменационный портал Нармины Амирбековой", waiting: "Ожидание входа...", userPlace: "Имя пользователя", passPlace: "Введите пароль", loginBtn: "Войти", adminBtn: "Вход для учителя", welcome: "Добро пожаловать", selectQuiz: "-- Выберите тест --", startBtn: "Начать тест", logout: "Выход", adminTitle: "Вход для учителя", adminPass: "Пароль админа", adminEnter: "Войти", back: "Назад", resTitle: "Результаты учеников", clear: "Очистить", wrong: "Неверные данные!" }
-};
-
-// 2. FİREBASE BAŞLATMA 
+// 1. Firebase Konfiqurasiyası
 const firebaseConfig = {
     apiKey: "AIzaSyDulTEwR08ErC3J9uvjDHGJ1wxqTy91x1I",
     authDomain: "tarix-sinaq-db.firebaseapp.com",
-    databaseURL: "https://tarix-sinaq-db-default-rtdb.europe-west1.firebasedatabase.app", 
+    databaseURL: "https://tarix-sinaq-db-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "tarix-sinaq-db",
     storageBucket: "tarix-sinaq-db.firebasestorage.app",
     messagingSenderId: "233204280838",
     appId: "1:233204280838:web:7d00c9800170a13ca45d87"
 };
 
-// Firebase-i başlat və yoxla
+// Firebase-i başlat
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const database = firebase.database();
 
+// 2. Dil Tərcümələri
+const t = {
+    az: { title: "Nərminə Əmirbəyovanın sınaq portalı", welcome: "Xoş gəldin", wait: "Giriş gözlənilir...", wrong: "Məlumatlar səhvdir!" },
+    ru: { title: "Экзаменационный портал Нармины Амирбековой", welcome: "Добро пожаловать", wait: "Ожидание входа...", wrong: "Неверные данные!" }
+};
+
 let currentLang = localStorage.getItem('lang') || 'az';
 
-// 3. ƏSAS FUNKSİYALAR 
 window.onload = () => {
     applyLanguage(currentLang);
     checkSession();
 };
 
-window.changeLang = function(lang) {
+window.changeLang = (lang) => {
     currentLang = lang;
     localStorage.setItem('lang', lang);
     applyLanguage(lang);
 };
 
-window.applyLanguage = function(lang) {
-    const t = translations[lang];
-    document.querySelector('h1').innerText = t.title;
-    const statusText = document.getElementById('status-text');
-    if(statusText) statusText.innerText = t.waiting;
-    document.getElementById('student-username').placeholder = t.userPlace;
-    document.getElementById('student-pass').placeholder = t.passPlace;
-    document.getElementById('btn-login').innerText = t.loginBtn;
-    document.getElementById('btn-admin-view').innerText = t.adminBtn;
-    document.getElementById('admin-login-title').innerText = t.adminTitle;
-    document.getElementById('admin-password').placeholder = t.adminPass;
-    document.getElementById('btn-admin-enter').innerText = t.adminEnter;
-    document.getElementById('btn-back').innerText = t.back;
-};
+function applyLanguage(lang) {
+    document.getElementById('h1-title').innerText = t[lang].title;
+    document.getElementById('p-status').innerText = t[lang].wait;
+}
 
-// Şagird Girişi
-window.loginStudent = function() {
-    const user = document.getElementById('student-username').value.trim();
-    const pass = document.getElementById('student-pass').value.trim();
+// 3. Giriş-Çıxış Funksiyaları
+window.loginStudent = () => {
+    const user = document.getElementById('student-username').value;
+    const pass = document.getElementById('student-pass').value;
     
     database.ref('students').once('value').then(snap => {
         let found = null;
@@ -63,35 +52,32 @@ window.loginStudent = function() {
         if(found) {
             localStorage.setItem('currentUser', JSON.stringify(found));
             showQuizArea(found);
-        } else { alert(translations[currentLang].wrong); }
+        } else { alert(t[currentLang].wrong); }
     });
 };
 
-// Admin Girişi (Console-dakı xətanı bu düzəldir)
-window.checkAdmin = function() {
-    const pass = document.getElementById('admin-password').value;
-    if(pass === "nermine2026") { 
-        document.getElementById('admin-login').classList.add('hidden');
-        document.getElementById('admin-panel').classList.remove('hidden');
-    } else {
-        alert("Səhv şifrə!");
-    }
-};
-
-window.showAdminLogin = function() {
+window.showAdminLogin = () => {
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('admin-login').classList.remove('hidden');
 };
 
-window.hideLogin = function() {
+window.hideAdminLogin = () => {
     document.getElementById('admin-login').classList.add('hidden');
     document.getElementById('login-screen').classList.remove('hidden');
 };
 
+window.checkAdmin = () => {
+    const pass = document.getElementById('admin-password').value;
+    if(pass === "12345") {
+        document.getElementById('admin-login').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+    } else { alert("Səhv şifrə!"); }
+};
+
 function showQuizArea(user) {
-    document.getElementById('student-login-area').classList.add('hidden');
+    document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('quiz-selection-area').classList.remove('hidden');
-    document.getElementById('welcome-student').innerText = `${translations[currentLang].welcome}, ${user.name}`;
+    document.getElementById('welcome-msg').innerText = `${t[currentLang].welcome}, ${user.name}`;
 }
 
 function checkSession() {
@@ -99,7 +85,7 @@ function checkSession() {
     if(user) showQuizArea(JSON.parse(user));
 }
 
-window.logout = function() {
+window.logout = () => {
     localStorage.removeItem('currentUser');
     location.reload();
 };
