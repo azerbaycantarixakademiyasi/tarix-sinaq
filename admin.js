@@ -15,7 +15,7 @@ let timerInterval;
 let quizQuestions = [];
 
 window.checkAdmin = () => {
-    if(document.getElementById('admin-password').value === "12345") {
+    if(document.getElementById('admin-password').value === "nermine2026") {
         document.getElementById('admin-login-screen').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
         showTab('results-section');
