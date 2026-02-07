@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nərminə Əmirbəyova | Tarix Sınaq Portalı</title>
+    <title>Tarix Sınaq Portalı | Şagird Girişi</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div id="quiz-container">
         <div id="login-screen">
             <h1>Nərminə Əmirbəyovanın sınaq portalı</h1>
@@ -17,9 +16,7 @@
                 <input type="text" id="student-username" placeholder="İstifadəçi adınız">
                 <input type="password" id="student-pass" placeholder="Parolunuzu daxil edin">
                 <button onclick="loginStudent()">Giriş et</button>
-                <button class="secondary-btn" onclick="showAdminLogin()">Müəllim Girişi</button>
             </div>
-
             <div id="quiz-selection-area" class="hidden">
                 <h3 id="welcome-msg"></h3>
                 <select id="quiz-select"><option value="">-- Sınaq seçin --</option></select>
@@ -27,60 +24,8 @@
                 <button class="secondary-btn" onclick="logout()">Çıxış</button>
             </div>
         </div>
-
-        <div id="admin-login" class="hidden">
-            <h3>Müəllim Girişi</h3>
-            <input type="password" id="admin-password" placeholder="Admin Parolu">
-            <button onclick="checkAdmin()">Daxil ol</button>
-            <button class="secondary-btn" onclick="hideAdminLogin()">Geri</button>
-        </div>
-
-        <div id="admin-panel" class="hidden">
-            <div class="admin-tabs">
-                <button onclick="showTab('results-section')">Nəticələr</button>
-                <button onclick="showTab('quizzes-section')">Sınaqlar</button>
-                <button onclick="showTab('students-section')">Şagirdlər</button>
-            </div>
-            <hr>
-            
-            <div id="results-section" class="tab-content">
-                <h3>Şagird Nəticələri</h3>
-                <div id="results-display"></div>
-            </div>
-
-            <div id="quizzes-section" class="tab-content hidden">
-                <h3>Yeni Sınaq Yaradın</h3>
-                <input type="text" id="quiz-title" placeholder="Sınaq Başlığı">
-                <input type="number" id="quiz-time" placeholder="Müddət (dəq)">
-                <div id="questions-area"></div>
-                <button class="variant-add-btn" onclick="addQuestionField()">+ Yeni Sual</button>
-                <button class="save-btn" onclick="saveQuiz()">Arxivə Yaz</button>
-                <hr>
-                <h3>Mövcud Sınaqlar</h3>
-                <div id="admin-quizzes-list"></div>
-            </div>
-
-            <div id="students-section" class="tab-content hidden">
-                <h3>Şagird Əlavə Et</h3>
-                <input type="text" id="new-std-name" placeholder="Ad Soyad">
-                <input type="text" id="new-std-pass" placeholder="Parol">
-                <button onclick="addStudent()">Şagirdi Bazaya Yaz</button>
-                <hr>
-                <div id="students-list"></div>
-            </div>
-
-            <button class="logout-btn" onclick="logout()">Sistemdən Çıxış</button>
-        </div>
+        <footer>Layihə rəhbəri: <strong>Xədicə Abbaszadə</strong></footer>
     </div>
-
-    <div id="details-modal" class="hidden modal-overlay">
-        <div class="modal-box">
-            <h3>İmtahan Detalları</h3>
-            <div id="modal-content"></div>
-            <button onclick="closeModal()" style="background:var(--gray)">Bağla</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+    <script src="student.js"></script>
 </body>
 </html>
