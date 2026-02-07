@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müəllim Paneli | Gizli Giriş</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="quiz-container">
+        <div id="admin-login-screen">
+            <h3>Müəllim Panelinə Giriş</h3>
+            <input type="password" id="admin-password" placeholder="Gizli Admin Parolu">
+            <button onclick="checkAdmin()">Daxil ol</button>
+        </div>
+
+        <div id="admin-panel" class="hidden">
+            <div class="admin-tabs">
+                <button onclick="showTab('results-section')">Nəticələr</button>
+                <button onclick="showTab('quizzes-section')">Sınaqlar</button>
+                <button onclick="showTab('students-section')">Şagirdlər</button>
+            </div>
+            <div id="results-section" class="tab-content"><h3>Nəticələr</h3><div id="results-display"></div></div>
+            <div id="quizzes-section" class="tab-content hidden">
+                <h3>Sınaq Yaradın</h3>
+                <input type="text" id="quiz-title" placeholder="Başlıq">
+                <input type="number" id="quiz-time" placeholder="Dəqiqə">
+                <div id="questions-area"></div>
+                <button onclick="addQuestionField()">+ Yeni Sual</button>
+                <button class="save-btn" onclick="saveQuiz()">Arxivə Yaz</button>
+                <hr><div id="admin-quizzes-list"></div>
+            </div>
+            <div id="students-section" class="tab-content hidden">
+                <h3>Şagirdlər</h3>
+                <input type="text" id="new-std-name" placeholder="Ad Soyad">
+                <input type="text" id="new-std-pass" placeholder="Parol">
+                <button onclick="addStudent()">Əlavə et</button>
+                <div id="students-list"></div>
+            </div>
+            <button onclick="logout()">Çıxış</button>
+        </div>
+        <footer>Layihə rəhbəri: <strong>Xədicə Abbaszadə</strong></footer>
+    </div>
+    <div id="details-modal" class="hidden modal-overlay">
+        <div class="modal-box"><h3>Detallar</h3><div id="modal-content"></div><button onclick="closeModal()">Bağla</button></div>
+    </div>
+    <script src="admin.js"></script>
+</body>
+</html>
