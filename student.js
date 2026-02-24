@@ -44,15 +44,13 @@ window.onload = () => {
 window.startQuiz = () => {
     const quizId = document.getElementById('quiz-select').value;
     if (!quizId) return alert("Sınaq seçin!");
-
     database.ref('quizzes/' + quizId).once('value').then(snap => {
         const quiz = snap.val();
-        let quizHtml = `<h2>${quiz.title}</h2><div id="timer" style="color:red; font-weight:bold; margin-bottom:10px;">Qalan vaxt: ${quiz.time}:00</div><hr>`;
-        
+        let quizHtml = `<h2>${quiz.title}</h2><div id="timer" style="color:red; font-weight:bold;">Qalan vaxt: ${quiz.time}:00</div><hr>`;
         quiz.questions.forEach((q, idx) => {
             quizHtml += `
                 <div class="question-box" style="text-align:left; border-bottom:1px solid #eee; padding-bottom:15px;">
-                    <p><strong>${idx + 1}. ${q.text}</strong></p>
+                    <p><strong>${idx + 1}. ${q.text} (${q.point} bal)</strong></p>
                     ${q.img ? `<img src="${q.img}" style="max-width:100%; border-radius:8px; margin:10px 0; display:block;">` : ''}
                     <div class="variants-list">
                         ${Object.entries(q.variants).map(([k, v]) => `
@@ -63,7 +61,6 @@ window.startQuiz = () => {
                     </div>
                 </div>`;
         });
-
         quizHtml += `<button onclick="finishQuiz('${quizId}')" style="background:#27ae60; margin-top:20px;">İmtahanı Bitir</button>`;
         document.getElementById('quiz-selection-area').innerHTML = quizHtml;
         startTimer(quiz.time, quizId);
@@ -73,8 +70,7 @@ window.startQuiz = () => {
 function startTimer(min, qId) {
     let sec = min * 60;
     timerInterval = setInterval(() => {
-        let m = Math.floor(sec / 60);
-        let s = sec % 60;
+        let m = Math.floor(sec / 60); let s = sec % 60;
         document.getElementById('timer').innerText = `Qalan vaxt: ${m}:${s < 10 ? '0'+s : s}`;
         if (sec <= 0) { clearInterval(timerInterval); finishQuiz(qId); }
         sec--;
@@ -85,39 +81,43 @@ window.finishQuiz = (qId) => {
     clearInterval(timerInterval);
     database.ref('quizzes/' + qId).once('value').then(snap => {
         const quiz = snap.val();
-        let correctCount = 0;
+        let studentTotal = 0; let maxTotal = 0;
         let answers = [];
         const user = JSON.parse(localStorage.getItem('currentUser'));
 
         let reportHtml = `<h2>İmtahan Nəticəsi</h2><hr>`;
-
         quiz.questions.forEach((q, idx) => {
             const sel = document.querySelector(`input[name="q${idx}"]:checked`);
             const ans = sel ? sel.value : "Yoxdur";
             const isOk = ans === q.correct;
-            if (isOk) correctCount++;
+            const p = Number(q.point) || 0;
+            maxTotal += p;
+            if (isOk) studentTotal += p;
             
-            answers.push({ qText: q.text, studentAns: ans, correctAns: q.correct });
+            answers.push({ qText: q.text, studentAns: ans, correctAns: q.correct, earned: isOk ? p : 0 });
 
             reportHtml += `
                 <div style="padding:15px; margin-bottom:10px; border-radius:10px; text-align:left; background:${isOk ? '#eaffea' : '#ffeaea'}; border:1px solid ${isOk ? '#27ae60' : '#c0392b'};">
-                    <p><strong>${idx+1}. ${q.text}</strong></p>
-                    <p style="font-size:14px;">Sizin cavab: <b>${ans}</b> | Düzgün: <b>${q.correct}</b> ${isOk ? '✅' : '❌'}</p>
+                    <p><strong>${idx+1}. ${q.text}</strong> (${p} bal)</p>
+                    <p>Sizin: <b>${ans}</b> | Düz: <b>${q.correct}</b> ${isOk ? '✅' : '❌'}</p>
                 </div>`;
         });
 
-        const score = Math.round((correctCount / quiz.questions.length) * 100);
-        reportHtml = `<h3 style="color:#1a4e8a;">Ümumi Balınız: ${score}%</h3>` + reportHtml;
-        reportHtml += `<button onclick="location.reload()" style="background:#3498db; margin-top:20px;">Ana Səhifəyə Qayıt</button>`;
+        const now = new Date();
+        const finishTime = now.toLocaleDateString('az-AZ') + " " + now.toLocaleTimeString('az-AZ');
 
         database.ref('results').push({
             studentName: user.name,
             quizTitle: quiz.title,
-            score: score,
-            answers: answers,
-            date: new Date().toLocaleString()
+            score: studentTotal,
+            maxScore: maxTotal,
+            date: finishTime,
+            answers: answers
         }).then(() => {
-            document.getElementById('quiz-selection-area').innerHTML = reportHtml;
+            document.getElementById('quiz-selection-area').innerHTML = `
+                <h3 style="color:#1a4e8a;">Nəticə: ${studentTotal} / ${maxTotal} bal</h3>
+                <p>Bitmə vaxtı: ${finishTime}</p>` + reportHtml + 
+                `<button onclick="location.reload()" style="background:#3498db; margin-top:20px;">Ana Səhifəyə Qayıt</button>`;
             window.scrollTo(0,0);
         });
     });
