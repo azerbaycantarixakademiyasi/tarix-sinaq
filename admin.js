@@ -1,159 +1,186 @@
-// Firebase Config 
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-let quizQuestions = [];
+const firebaseConfig = {
+    apiKey: "AIzaSyDulTEwR08ErC3J9uvjDHGJ1wxqTy91x1I",
+    authDomain: "tarix-sinaq-db.firebaseapp.com",
+    databaseURL: "https://tarix-sinaq-db-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "tarix-sinaq-db",
+    storageBucket: "tarix-sinaq-db.firebasestorage.app",
+    messagingSenderId: "233204280838",
+    appId: "1:233204280838:web:7d00c9800170a13ca45d87"
+};
 
-window.checkAdmin = () => {
-    const pass = document.getElementById('admin-password').value;
-    if (pass === "12345") {
-        document.getElementById('admin-login-screen').style.display = 'none';
-        document.getElementById('admin-panel').style.display = 'block';
-        showTab('results-sec');
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Müəllim Girişi
+window.admLogin = function() {
+    const p = document.getElementById('adm-pass').value;
+    if (p === "nərminə.ə2026") { 
+        document.getElementById('admin-login-screen').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+        admTab('res-sec');
     } else {
-        alert("Şifrə yanlışdır!");
+        alert("Şifrə səhvdir!");
     }
 };
 
-window.showTab = (tabId) => {
-    document.querySelectorAll('.tab-content').forEach(d => d.style.display = 'none');
-    document.getElementById(tabId).style.display = 'block';
-    if (tabId === 'results-sec') loadAdminResults();
-    if (tabId === 'quizzes-sec') loadAdminQuizzes();
-    if (tabId === 'materials-sec') loadAdminMaterials();
-};
+window.admTab = function(id) {
+    document.querySelectorAll('.adm-content').forEach(t => t.classList.add('hidden'));
+    const target = document.getElementById(id);
+    if(target) target.classList.remove('hidden');
 
-function loadAdminQuizzes() {
-    database.ref('quizzes').on('value', snap => {
-        let h = "<h3>Sınaqlar</h3><table><tr><th>Ad</th><th>Status</th><th>Sil</th></tr>";
-        snap.forEach(c => {
-            const q = c.val();
-            h += `<tr>
-                <td>${q.title}</td>
-                <td><button onclick="toggleQuiz('${c.key}', ${q.active})" style="background:${q.active?'#27ae60':'#7f8c8d'};">${q.active?'Aktiv':'Deaktiv'}</button></td>
-                <td><button onclick="deleteQuiz('${c.key}')" style="background:red;">Sil</button></td>
-            </tr>`;
-        });
-        document.getElementById('admin-quizzes-display').innerHTML = h + "</table><button onclick='openNewQuizForm()'>+ Yeni Sınaq Yarat</button>";
-    });
-}
-
-window.toggleQuiz = (id, status) => {
-    database.ref('quizzes/' + id).update({ active: !status });
-};
-
-window.deleteQuiz = (id) => {
-    if (confirm("Bu sınağı silmək istəyirsiniz?")) database.ref('quizzes/' + id).remove();
+    if (id === 'res-sec') loadAdminResults();
+    if (id === 'quiz-sec') loadAdminQuizzes();
+    if (id === 'mat-sec') loadAdminMaterials();
 };
 
 function loadAdminResults() {
-    database.ref('results').on('value', snap => {
-        let h = "<table><tr><th>Şagird</th><th>Bal</th><th>D/S</th><th>X</th></tr>";
+    db.ref('results').on('value', snap => {
+        let h = "<table><tr><th>Şagird</th><th>Bal</th><th>Tarix</th><th>X</th></tr>";
         snap.forEach(c => {
             const r = c.val();
             h += `<tr>
                 <td>${r.studentName}</td>
-                <td><b>${r.score}</b></td>
-                <td>${r.correct}/${r.wrong}</td>
-                <td><button onclick="deleteResult('${c.key}')" style="background:red; width:auto;">Sil</button></td>
+                <td>${r.score}</td>
+                <td>${r.date}</td>
+                <td><button onclick="deleteRes('${c.key}')" style="background:red; width:auto; padding:5px;">Sil</button></td>
             </tr>`;
         });
-        document.getElementById('admin-results-display').innerHTML = h + "</table>";
+        document.getElementById('adm-res-list').innerHTML = h + "</table>";
     });
 }
 
-window.deleteResult = (id) => {
-    if (confirm("Nəticə silinsin?")) database.ref('results/' + id).remove();
-};
+window.deleteRes = (id) => { if(confirm("Silinsin?")) db.ref('results/'+id).remove(); };
 
-window.saveMaterial = () => {
-    const title = document.getElementById('mat-title').value;
-    const link = document.getElementById('mat-link').value;
-    if (title && link) {
-        database.ref('materials').push({ title, link, type: 'link' }).then(() => {
+function loadAdminQuizzes() {
+    db.ref('quizzes').on('value', snap => {
+        let h = "";
+        snap.forEach(c => {
+            const q = c.val();
+            h += `<div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:8px;">
+                <b>${q.title}</b>
+                <div style="margin-top:10px;">
+                    <button onclick="toggleQuiz('${c.key}', ${q.active})" style="width:auto; background:${q.active?'#27ae60':'#7f8c8d'}">${q.active?'Aktiv':'Deaktiv'}</button>
+                    <button onclick="deleteQuiz('${c.key}')" style="width:auto; background:red;">Sil</button>
+                </div>
+            </div>`;
+        });
+        document.getElementById('adm-quiz-list').innerHTML = h || "Sınaq yoxdur.";
+    });
+}
+
+window.toggleQuiz = (id, st) => db.ref('quizzes/'+id).update({ active: !st });
+window.deleteQuiz = (id) => { if(confirm("Sınaq silinsin?")) db.ref('quizzes/'+id).remove(); };
+
+window.addM = function() {
+    const t = document.getElementById('m-t').value;
+    const l = document.getElementById('m-l').value;
+    if(t && l) {
+        db.ref('materials').push({ title: t, link: l }).then(() => {
             alert("Əlavə edildi!");
-            document.getElementById('mat-title').value = "";
-            document.getElementById('mat-link').value = "";
+            document.getElementById('m-t').value = "";
+            document.getElementById('m-l').value = "";
         });
     }
 };
 
 function loadAdminMaterials() {
-    database.ref('materials').on('value', snap => {
+    db.ref('materials').on('value', snap => {
         let h = "<table><tr><th>Başlıq</th><th>Sil</th></tr>";
         snap.forEach(c => {
-            h += `<tr><td>${c.val().title}</td><td><button onclick="deleteMaterial('${c.key}')" style="background:red;">Sil</button></td></tr>`;
+            h += `<tr><td>${c.val().title}</td><td><button onclick="deleteMat('${c.key}')" style="background:red; width:auto;">Sil</button></td></tr>`;
         });
-        document.getElementById('admin-materials-list').innerHTML = h + "</table>";
+        document.getElementById('adm-mat-list').innerHTML = h + "</table>";
     });
 }
 
-window.deleteMaterial = (id) => database.ref('materials/' + id).remove();
+window.deleteMat = (id) => db.ref('materials/'+id).remove();
 
-window.openNewQuizForm = () => {
-    document.getElementById('admin-quizzes-display').innerHTML = `
-        <h3>Yeni Sınaq</h3>
-        <input type="text" id="quiz-title" placeholder="Sınaq Başlığı">
-        <input type="number" id="quiz-time" placeholder="Müddət (dəq)">
-        <div id="questions-area"></div>
-        <button onclick="addQuestionField()">+ Sual Əlavə Et</button>
-        <button onclick="saveQuiz()" style="background:green;">Sınağı Tamamla və Yadda Saxla</button>
-        <button onclick="loadAdminQuizzes()">Ləğv Et</button>
-    `;
-    quizQuestions = [];
-};
+let quizQuestions = []; 
 
-window.addQuestionField = () => {
-    const idx = quizQuestions.length + 1;
-    const div = document.createElement('div');
-    div.style.border = "1px solid #ccc";
-    div.style.padding = "10px";
-    div.style.margin = "10px 0";
-    div.innerHTML = `
-        <b>Sual ${idx}</b>
-        <input type="text" placeholder="Sual mətni" id="q-text-${idx}">
-        <input type="number" placeholder="Bal" id="q-point-${idx}">
-        <input type="text" placeholder="Şəkil URL (yoxdursa boş qoy)" id="q-img-${idx}">
-        <div id="vars-${idx}"></div>
-        <button onclick="addVar(${idx})">+ Variant Əlavə Et</button>
-        <input type="text" placeholder="Düzgün cavab (Məs: A)" id="q-corr-${idx}">
-    `;
-    document.getElementById('questions-area').appendChild(div);
-    quizQuestions.push({ id: idx, vars: [] });
-};
-
-window.addVar = (qId) => {
-    const q = quizQuestions.find(x => x.id === qId);
-    const char = String.fromCharCode(65 + q.vars.length);
-    const inp = document.createElement('input');
-    inp.placeholder = `Variant ${char}`;
-    inp.id = `q-${qId}-v-${char}`;
-    document.getElementById(`vars-${qId}`).appendChild(inp);
-    q.vars.push(char);
-};
-
-window.saveQuiz = () => {
-    const title = document.getElementById('quiz-title').value;
-    const time = document.getElementById('quiz-time').value;
-    let data = { title, time, active: false, questions: [] };
+window.openNewQuizForm = function() {
+    quizQuestions = []; 
+    const area = document.getElementById('adm-quiz-list'); 
     
-    quizQuestions.forEach(q => {
-        let qObj = {
-            text: document.getElementById(`q-text-${q.id}`).value,
-            point: document.getElementById(`q-point-${q.id}`).value,
-            img: document.getElementById(`q-img-${q.id}`).value,
-            correct: document.getElementById(`q-corr-${q.id}`).value.toUpperCase(),
-            variants: {}
-        };
-        q.vars.forEach(v => {
-            qObj.variants[v] = document.getElementById(`q-${q.id}-v-${v}`).value;
+    area.innerHTML = `
+        <div style="background:#f4f4f4; padding:20px; border-radius:10px; border:2px solid #1a4e8a;">
+            <h3>Yeni Sınaq Yarat</h3>
+            <input type="text" id="q-title" placeholder="Sınağın adı (məs: 9-cu sinif Kiçik Summativ)">
+            <input type="number" id="q-time" placeholder="Müddət (dəqiqə ilə)">
+            <hr>
+            <div id="questions-container"></div>
+            <button onclick="addNewQuestionField()" style="background:#3498db;">+ Sual Əlavə Et</button>
+            <button onclick="saveFullQuiz()" style="background:#27ae60; margin-top:20px;">Sınağı Bazaya Yüklə</button>
+            <button onclick="loadAdminQuizzes()" style="background:#7f8c8d;">Ləğv Et</button>
+        </div>
+    `;
+};
+
+window.addNewQuestionField = function() {
+    const qIndex = quizQuestions.length + 1;
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question-box';
+    qDiv.style = "background:white; padding:15px; margin:10px 0; border-left:5px solid #1a4e8a; text-align:left;";
+    qDiv.innerHTML = `
+        <b>Sual ${qIndex}</b>
+        <input type="text" id="txt-${qIndex}" placeholder="Sualın mətni">
+        <input type="number" id="pnt-${qIndex}" placeholder="Bal (məs: 5)">
+        <input type="text" id="img-${qIndex}" placeholder="Şəkil URL (yoxdursa boş qoy)">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <input type="text" id="vA-${qIndex}" placeholder="A variantı">
+            <input type="text" id="vB-${qIndex}" placeholder="B variantı">
+            <input type="text" id="vC-${qIndex}" placeholder="C variantı">
+            <input type="text" id="vD-${qIndex}" placeholder="D variantı">
+        </div>
+        <input type="text" id="cor-${qIndex}" placeholder="Düzgün variant (Məs: A)" maxlength="1" style="border:2px solid #27ae60;">
+    `;
+    document.getElementById('questions-container').appendChild(qDiv);
+    quizQuestions.push(qIndex);
+};
+
+window.saveFullQuiz = function() {
+    const title = document.getElementById('q-title').value;
+    const time = document.getElementById('q-time').value;
+
+    if (!title || !time || quizQuestions.length === 0) {
+        alert("Sınaq adını, vaxtını və ən azı 1 sualı doldurun!");
+        return;
+    }
+
+    let finalQuestions = [];
+    
+    for (let i = 1; i <= quizQuestions.length; i++) {
+        const text = document.getElementById(`txt-${i}`).value;
+        const point = document.getElementById(`pnt-${i}`).value;
+        const correct = document.getElementById(`cor-${i}`).value.toUpperCase();
+        
+        if (!text || !correct) {
+            alert(i + "-ci sualın məlumatları tam deyil!");
+            return;
+        }
+
+        finalQuestions.push({
+            text: text,
+            point: point,
+            img: document.getElementById(`img-${i}`).value,
+            correct: correct,
+            variants: {
+                A: document.getElementById(`vA-${i}`).value,
+                B: document.getElementById(`vB-${i}`).value,
+                C: document.getElementById(`vC-${i}`).value,
+                D: document.getElementById(`vD-${i}`).value
+            }
         });
-        data.questions.push(qObj);
-    });
-    
-    database.ref('quizzes').push(data).then(() => {
-        alert("Sınaq yaradıldı! Onu aktiv etməyi unutmayın.");
-        loadAdminQuizzes();
-    });
-};
+    }
 
-window.logout = () => { location.href = "index.html"; };
+    const quizData = {
+        title: title,
+        time: time,
+        active: false, 
+        questions: finalQuestions
+    };
+
+    db.ref('quizzes').push(quizData).then(() => {
+        alert("Sınaq uğurla yaradıldı!");
+        loadAdminQuizzes();
+    }).catch(err => alert("Xəta baş verdi: " + err.message));
+};
