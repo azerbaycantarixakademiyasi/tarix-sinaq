@@ -1,35 +1,33 @@
 <!DOCTYPE html>
 <html lang="az">
-<div style="text-align:right; padding:10px;">
-<button onclick="changeLang('az')" style="width:auto; padding:5px; font-size:12px;">AZ</button>
-<button onclick="changeLang('ru')" style="width:auto; padding:5px; font-size:12px;">RU</button>
-</div>
-</div>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarix Sınaq Portalı | Şagird Girişi</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <title>Tarix Sınaq Portalı - DİM Standartı</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-    <div id="quiz-container">
-        <div id="login-screen">
-            <h1>Nərminə Əmirbəyovanın sınaq portalı</h1>
+    <div class="quiz-container">
+        <div id="login-screen" class="card">
+            <h1 id="main-title">Nərminə Əmirbəyovanın sınaq portalı</h1>
             <div id="student-login-area">
-                <input type="text" id="student-username" placeholder="İstifadəçi adınız">
-                <input type="password" id="student-pass" placeholder="Parolunuzu daxil edin">
-                <button onclick="loginStudent()">Giriş et</button>
+                <input type="text" id="student-username" placeholder="İstifadəçi adı">
+                <input type="password" id="student-pass" placeholder="Parol">
+                <button onclick="loginStudent()" id="login-btn">Giriş et</button>
             </div>
-            <div id="quiz-selection-area" class="hidden">
-                <h3 id="welcome-msg"></h3>
-                <select id="quiz-select"><option value="">-- Sınaq seçin --</option></select>
-                <button onclick="startQuiz()">Sınağa Başla</button>
-                <button class="secondary-btn" onclick="logout()">Çıxış</button>
-            </div>
+            <p class="footer-credit">Layihə rəhbəri: <strong>Xədicə Abbaszadə</strong></p>
         </div>
-        <footer>Layihə rəhbəri: <strong>Xədicə Abbaszadə</strong></footer>
+
+        <div id="quiz-selection-area" class="card hidden">
+            <h2 id="welcome-msg">Xoş gəldin!</h2>
+            <select id="quiz-select">
+                <option value="">-- Sınaq seçin --</option>
+            </select>
+            <button onclick="startQuiz()" id="start-btn">Sınağa Başla</button>
+            <button onclick="logout()" class="logout-btn">Çıxış</button>
+        </div>
     </div>
     <script src="student.js"></script>
 </body>
