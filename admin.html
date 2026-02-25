@@ -2,47 +2,35 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - LMS İdarəetmə</title>
+    <title>Admin Panel</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
     <div class="admin-container">
-        <div id="admin-login" class="card">
+        <div id="admin-login-screen" class="card">
             <h2>Müəllim Girişi</h2>
             <input type="password" id="admin-password" placeholder="Şifrə">
             <button onclick="checkAdmin()">Daxil Ol</button>
         </div>
 
-        <div id="admin-panel" class="card hidden">
-            <nav class="admin-nav">
+        <div id="admin-panel" class="card hidden" style="display:none;">
+            <nav>
                 <button onclick="showTab('results-sec')">Nəticələr</button>
                 <button onclick="showTab('quizzes-sec')">Sınaqlar</button>
                 <button onclick="showTab('materials-sec')">Materiallar</button>
-                <button onclick="logout()" style="background:red;">Çıxış</button>
+                <button onclick="logout()">Çıxış</button>
             </nav>
-
             <div id="results-sec" class="tab-content">
-                <h3>Şagird Nəticələri (Silmə imkanı ilə)</h3>
                 <div id="admin-results-display"></div>
             </div>
-
             <div id="quizzes-sec" class="tab-content hidden">
-                <button onclick="openNewQuiz()">+ Yeni Sınaq</button>
                 <div id="admin-quizzes-display"></div>
             </div>
-
             <div id="materials-sec" class="tab-content hidden">
-                <h3>Material Yüklə</h3>
                 <input type="text" id="mat-title" placeholder="Başlıq">
-                <select id="mat-type">
-                    <option value="pdf">PDF Kitab</option>
-                    <option value="video">Video Dərs (Link)</option>
-                    <option value="slide">Slayd (PPTX Link)</option>
-                </select>
-                <input type="text" id="mat-link" placeholder="Link (URL)">
+                <input type="text" id="mat-link" placeholder="Link">
                 <button onclick="saveMaterial()">Yadda Saxla</button>
                 <div id="admin-materials-list"></div>
             </div>
