@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarix Portalı - Şagird Kabineti</title>
+    <title>Tarix Portalı</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -15,37 +15,33 @@
             <input type="text" id="student-username" placeholder="İstifadəçi adı">
             <input type="password" id="student-pass" placeholder="Parol">
             <button onclick="loginStudent()">Giriş et</button>
-            <p class="footer-credit">Layihə rəhbəri: <strong>Xədicə Abbaszadə</strong></p>
         </div>
 
-        <div id="cabinet-area" class="card hidden">
+        <div id="cabinet-area" class="card hidden" style="display:none;">
             <h2 id="welcome-msg">Xoş gəldin!</h2>
             <nav class="cabinet-nav">
                 <button onclick="showCabinetTab('exams-tab')">İmtahanlar</button>
                 <button onclick="showCabinetTab('library-tab')">Kitabxana</button>
                 <button onclick="showCabinetTab('results-tab')">Nəticələrim</button>
-                <button onclick="logout()" style="background:#c0392b;">Çıxış</button>
+                <button onclick="logout()">Çıxış</button>
             </nav>
-
             <div id="exams-tab" class="cabinet-content">
                 <h3>Aktiv Sınaqlar</h3>
                 <div id="active-exams-list"></div>
             </div>
-
-            <div id="library-tab" class="cabinet-content hidden">
+            <div id="library-tab" class="cabinet-content hidden" style="display:none;">
                 <h3>Dərs Materialları</h3>
                 <div id="materials-list"></div>
             </div>
-
-            <div id="results-tab" class="cabinet-content hidden">
-                <h3>İmtahan Tarixçəsi</h3>
-                <p style="font-size:12px; color:gray;">Valideynlər yalnız balları görə bilər.</p>
+            <div id="results-tab" class="cabinet-content hidden" style="display:none;">
+                <h3>Nəticələr</h3>
                 <div id="my-results-list"></div>
             </div>
         </div>
 
-        <div id="quiz-area" class="card hidden"></div>
+        <div id="quiz-area" class="card hidden" style="display:none;"></div>
     </div>
+
     <script src="student.js"></script>
 </body>
 </html>
