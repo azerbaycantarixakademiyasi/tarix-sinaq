@@ -1,54 +1,52 @@
 <!DOCTYPE html>
 <html lang="az">
-<div style="text-align:right; padding:10px;">
-<button onclick="changeLang('az')" style="width:auto; padding:5px; font-size:12px;">AZ</button>
-<button onclick="changeLang('ru')" style="width:auto; padding:5px; font-size:12px;">RU</button>
-</div>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Müəllim Paneli</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <title>Admin - LMS İdarəetmə</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-    <div id="quiz-container">
-        <div id="admin-login-screen">
-            <h3>Müəllim Panelinə Giriş</h3>
-            <input type="password" id="admin-password" placeholder="Admin Parolu">
-            <button onclick="checkAdmin()">Daxil ol</button>
+    <div class="admin-container">
+        <div id="admin-login" class="card">
+            <h2>Müəllim Girişi</h2>
+            <input type="password" id="admin-password" placeholder="Şifrə">
+            <button onclick="checkAdmin()">Daxil Ol</button>
         </div>
 
-        <div id="admin-panel" class="hidden">
-            <div class="admin-tabs">
-                <button onclick="showTab('results-section')">Nəticələr</button>
-                <button onclick="showTab('quizzes-section')">Sınaqlar</button>
-                <button onclick="showTab('students-section')">Şagirdlər</button>
+        <div id="admin-panel" class="card hidden">
+            <nav class="admin-nav">
+                <button onclick="showTab('results-sec')">Nəticələr</button>
+                <button onclick="showTab('quizzes-sec')">Sınaqlar</button>
+                <button onclick="showTab('materials-sec')">Materiallar</button>
+                <button onclick="logout()" style="background:red;">Çıxış</button>
+            </nav>
+
+            <div id="results-sec" class="tab-content">
+                <h3>Şagird Nəticələri (Silmə imkanı ilə)</h3>
+                <div id="admin-results-display"></div>
             </div>
-            <div id="results-section" class="tab-content"><h3>Nəticələr</h3><div id="results-display"></div></div>
-            <div id="quizzes-section" class="tab-content hidden">
-                <h3>Sınaq Yaradın</h3>
-                <input type="text" id="quiz-title" placeholder="Başlıq">
-                <input type="number" id="quiz-time" placeholder="Dəqiqə">
-                <div id="questions-area"></div>
-                <button onclick="addQuestionField()">+ Yeni Sual</button>
-                <button class="save-btn" onclick="saveQuiz()">Arxivə Yaz</button>
-                <hr><div id="admin-quizzes-list"></div>
+
+            <div id="quizzes-sec" class="tab-content hidden">
+                <button onclick="openNewQuiz()">+ Yeni Sınaq</button>
+                <div id="admin-quizzes-display"></div>
             </div>
-            <div id="students-section" class="tab-content hidden">
-                <h3>Şagirdlər</h3>
-                <input type="text" id="new-std-name" placeholder="Ad Soyad">
-                <input type="text" id="new-std-pass" placeholder="Parol">
-                <button onclick="addStudent()">Əlavə et</button>
-                <div id="students-list"></div>
+
+            <div id="materials-sec" class="tab-content hidden">
+                <h3>Material Yüklə</h3>
+                <input type="text" id="mat-title" placeholder="Başlıq">
+                <select id="mat-type">
+                    <option value="pdf">PDF Kitab</option>
+                    <option value="video">Video Dərs (Link)</option>
+                    <option value="slide">Slayd (PPTX Link)</option>
+                </select>
+                <input type="text" id="mat-link" placeholder="Link (URL)">
+                <button onclick="saveMaterial()">Yadda Saxla</button>
+                <div id="admin-materials-list"></div>
             </div>
-            <button onclick="logout()">Çıxış</button>
         </div>
-        <footer>Layihə rəhbəri: <strong>Xədicə Abbaszadə</strong></footer>
-    </div>
-    <div id="details-modal" class="hidden modal-overlay">
-        <div class="modal-box"><h3>Detallar</h3><div id="modal-content"></div><button onclick="closeModal()">Bağla</button></div>
     </div>
     <script src="admin.js"></script>
 </body>
