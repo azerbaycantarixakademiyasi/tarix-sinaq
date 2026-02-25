@@ -2,7 +2,7 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Panel - Tarix Portalı</title>
+    <title>Admin Panel</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -17,30 +17,26 @@
 
         <div id="admin-panel" class="card hidden">
             <nav class="cabinet-nav">
-                <button onclick="admTab('res-sec')">Nəticələr</button>
+                <button onclick="admTab('std-sec')">Şagirdlər</button>
                 <button onclick="admTab('quiz-sec')">Sınaqlar</button>
+                <button onclick="admTab('res-sec')">Nəticələr</button>
                 <button onclick="admTab('mat-sec')">Materiallar</button>
                 <button onclick="location.reload()" style="background:red;">Çıxış</button>
             </nav>
-
-            <div id="res-sec" class="adm-content">
-                <h3>Şagird Nəticələri</h3>
-                <div id="adm-res-list">Yüklənir...</div>
+            <div id="std-sec" class="adm-content">
+                <input id="n-s-n" placeholder="Ad Soyad"><input id="n-s-p" placeholder="Şifrə">
+                <button onclick="addS()">Əlavə Et</button>
+                <div id="adm-std-list"></div>
             </div>
-
             <div id="quiz-sec" class="adm-content hidden">
-                <h3>Sınaqların İdarə Edilməsi</h3>
+                <button onclick="openForm()" style="background:green;">+ Yeni Sınaq</button>
                 <div id="adm-quiz-list"></div>
-                <hr>
-                <button onclick="openNewQuizForm()" style="background:green;">+ Yeni Sınaq Yarat</button>
             </div>
-
+            <div id="res-sec" class="adm-content hidden"><div id="adm-res-list"></div></div>
             <div id="mat-sec" class="adm-content hidden">
-                <h3>Material Əlavə Et</h3>
-                <input id="m-t" placeholder="Materialın Başlığı">
-                <input id="m-l" placeholder="Link (Drive və ya YouTube)">
+                <input id="m-t" placeholder="Başlıq"><input id="m-l" placeholder="Link">
                 <button onclick="addM()">Yadda Saxla</button>
-                <div id="adm-mat-list" style="margin-top:20px;"></div>
+                <div id="adm-mat-list"></div>
             </div>
         </div>
     </div>
