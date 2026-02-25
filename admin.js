@@ -1,32 +1,15 @@
 
-const firebaseConfig = {
-    apiKey: "AIzaSyDulTEwR08ErC3J9uvjDHGJ1wxqTy91x1I",
-    authDomain: "tarix-sinaq-db.firebaseapp.com",
-    databaseURL: "https://tarix-sinaq-db-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "tarix-sinaq-db",
-    storageBucket: "tarix-sinaq-db.firebasestorage.app",
-    messagingSenderId: "233204280838",
-    appId: "1:233204280838:web:7d00c9800170a13ca45d87"
-};
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
-
 let quizQuestions = [];
+let currentLang = localStorage.getItem('siteLang') || 'az';
 
 window.checkAdmin = () => {
     if(document.getElementById('admin-password').value === "12345") {
         document.getElementById('admin-login-screen').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
         showTab('results-section');
-    } else alert("Səhv şifrə!");
-};
-
-window.showTab = (tabId) => {
-    document.querySelectorAll('.tab-content').forEach(d => d.classList.add('hidden'));
-    document.getElementById(tabId).classList.remove('hidden');
-    if (tabId === 'students-section') loadStudents();
-    if (tabId === 'results-section') loadResults();
-    if (tabId === 'quizzes-section') loadAdminQuizzes();
+    } else alert("Error!");
 };
 
 window.addQuestionField = () => {
@@ -35,14 +18,14 @@ window.addQuestionField = () => {
     div.className = "question-box";
     div.innerHTML = `
         <strong>Sual ${idx}:</strong>
-        <input type="text" placeholder="Sualın mətni" id="q-text-${idx}">
+        <input type="text" placeholder="Sualın mətni / Текст вопроса" id="q-text-${idx}">
         <div style="display:flex; gap:10px;">
-            <input type="number" placeholder="Bal" id="q-point-${idx}" style="flex:1; border-color:#f1c40f;">
-            <input type="text" placeholder="Şəkil URL" id="q-img-${idx}" style="flex:2; font-size:11px;">
+            <input type="number" placeholder="Bal / Балл" id="q-point-${idx}" style="flex:1;">
+            <input type="text" placeholder="Şəkil URL / Ссылка на фото" id="q-img-${idx}" style="flex:2;">
         </div>
         <div id="vars-${idx}"></div>
-        <button onclick="addVar(${idx})" style="width:auto; font-size:11px; margin-top:5px;">+ Variant</button>
-        <input type="text" placeholder="Düzgün hərf (A, B...)" id="q-corr-${idx}" style="margin-top:10px; border-color:green;">
+        <button onclick="addVar(${idx})" style="width:auto; font-size:11px;">+ Variant</button>
+        <input type="text" placeholder="Düzgün variant (A, B...)" id="q-corr-${idx}" style="margin-top:10px; border-color:green;">
     `;
     document.getElementById('questions-area').appendChild(div);
     quizQuestions.push({ id: idx, vars: [] });
@@ -73,24 +56,20 @@ window.saveQuiz = () => {
         q.vars.forEach(v => { qObj.variants[v] = document.getElementById(`q-${q.id}-v-${v}`).value; });
         data.questions.push(qObj);
     });
-    database.ref('quizzes').push(data).then(() => { alert("Yadda saxlanıldı!"); location.reload(); });
+    database.ref('quizzes').push(data).then(() => { alert("Saved!"); location.reload(); });
 };
 
 function loadResults() {
     database.ref('results').on('value', snap => {
-        let h = `<table><tr><th>Şagird</th><th>Bal</th><th>Vaxt</th><th>Bax</th></tr>`;
+        let h = `<table><tr><th>Şagird</th><th>Bal</th><th>Vaxt</th></tr>`;
         snap.forEach(c => {
             const r = c.val();
-            h += `<tr>
-                <td>${r.studentName}</td>
-                <td>${r.score} / ${r.maxScore}</td>
-                <td style="font-size:10px;">${r.date}</td>
-                <td><button onclick="viewDetail('${c.key}')" style="width:auto; padding:2px 8px;">👁</button></td>
-            </tr>`;
+            h += `<tr><td>${r.studentName}</td><td>${r.score}/${r.maxScore}</td><td style="font-size:10px;">${r.date}</td></tr>`;
         });
         document.getElementById('results-display').innerHTML = h + `</table>`;
     });
 }
+// Digər loadStudents, loadAdminQuizzes funksiyaları əvvəlki kimi qalır...
 
 function loadAdminQuizzes() {
     database.ref('quizzes').on('value', snap => {
