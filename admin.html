@@ -8,33 +8,22 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-    <div class="admin-container">
-        <div id="admin-login-screen" class="card">
-            <h2>Müəllim Girişi</h2>
-            <input type="password" id="admin-password" placeholder="Şifrə">
-            <button onclick="checkAdmin()">Daxil Ol</button>
-        </div>
-
-        <div id="admin-panel" class="card hidden" style="display:none;">
-            <nav>
-                <button onclick="showTab('results-sec')">Nəticələr</button>
-                <button onclick="showTab('quizzes-sec')">Sınaqlar</button>
-                <button onclick="showTab('materials-sec')">Materiallar</button>
-                <button onclick="logout()">Çıxış</button>
-            </nav>
-            <div id="results-sec" class="tab-content">
-                <div id="admin-results-display"></div>
-            </div>
-            <div id="quizzes-sec" class="tab-content hidden">
-                <div id="admin-quizzes-display"></div>
-            </div>
-            <div id="materials-sec" class="tab-content hidden">
-                <input type="text" id="mat-title" placeholder="Başlıq">
-                <input type="text" id="mat-link" placeholder="Link">
-                <button onclick="saveMaterial()">Yadda Saxla</button>
-                <div id="admin-materials-list"></div>
-            </div>
-        </div>
+    <div class="card" id="admin-login">
+        <h2>Müəllim Girişi</h2>
+        <input type="password" id="adm-pass" placeholder="Şifrə">
+        <button onclick="admLogin()">Daxil Ol</button>
+        <p style="font-size: 12px; margin-top: 20px;">Layihə rəhbəri: <b>Xədicə Abbaszadə</b></p>
+    </div>
+    <div class="card hidden" id="admin-panel">
+        <nav class="cabinet-nav">
+            <button onclick="admTab('res-sec')">Nəticələr</button>
+            <button onclick="admTab('quiz-sec')">Sınaqlar</button>
+            <button onclick="admTab('mat-sec')">Materiallar</button>
+            <button onclick="location.reload()">Çıxış</button>
+        </nav>
+        <div id="res-sec" class="adm-content"><h3>Nəticələr</h3><div id="adm-res-list"></div></div>
+        <div id="quiz-sec" class="adm-content hidden"><h3>Sınaqlar</h3><div id="adm-quiz-list"></div></div>
+        <div id="mat-sec" class="adm-content hidden"><h3>Material Əlavə Et</h3><input id="m-t" placeholder="Başlıq"><input id="m-l" placeholder="Link"><button onclick="addM()">Yadda Saxla</button></div>
     </div>
     <script src="admin.js"></script>
 </body>
