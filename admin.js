@@ -1,186 +1,102 @@
-const firebaseConfig = {
-    apiKey: "AIzaSyDulTEwR08ErC3J9uvjDHGJ1wxqTy91x1I",
-    authDomain: "tarix-sinaq-db.firebaseapp.com",
-    databaseURL: "https://tarix-sinaq-db-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "tarix-sinaq-db",
-    storageBucket: "tarix-sinaq-db.firebasestorage.app",
-    messagingSenderId: "233204280838",
-    appId: "1:233204280838:web:7d00c9800170a13ca45d87"
-};
-
+// Firebase config 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+let qQs = [];
 
-// Müəllim Girişi
-window.admLogin = function() {
-    const p = document.getElementById('adm-pass').value;
-    if (p === "nərminə.ə2026") { 
+window.admLogin = () => {
+    if(document.getElementById('adm-pass').value === "12345") {
         document.getElementById('admin-login-screen').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
-        admTab('res-sec');
-    } else {
-        alert("Şifrə səhvdir!");
-    }
+        admTab('std-sec');
+    } else alert("Səhv!");
 };
 
-window.admTab = function(id) {
+window.admTab = (id) => {
     document.querySelectorAll('.adm-content').forEach(t => t.classList.add('hidden'));
-    const target = document.getElementById(id);
-    if(target) target.classList.remove('hidden');
-
-    if (id === 'res-sec') loadAdminResults();
-    if (id === 'quiz-sec') loadAdminQuizzes();
-    if (id === 'mat-sec') loadAdminMaterials();
+    document.getElementById(id).classList.remove('hidden');
+    if(id === 'std-sec') loadAdminStudents();
+    if(id === 'quiz-sec') loadAdminQuizzes();
+    if(id === 'res-sec') loadAdminResults();
+    if(id === 'mat-sec') loadAdminMaterials();
 };
 
-function loadAdminResults() {
-    db.ref('results').on('value', snap => {
-        let h = "<table><tr><th>Şagird</th><th>Bal</th><th>Tarix</th><th>X</th></tr>";
-        snap.forEach(c => {
-            const r = c.val();
-            h += `<tr>
-                <td>${r.studentName}</td>
-                <td>${r.score}</td>
-                <td>${r.date}</td>
-                <td><button onclick="deleteRes('${c.key}')" style="background:red; width:auto; padding:5px;">Sil</button></td>
-            </tr>`;
-        });
-        document.getElementById('adm-res-list').innerHTML = h + "</table>";
+window.addS = () => {
+    const n = document.getElementById('n-s-n').value, p = document.getElementById('n-s-p').value;
+    if(n && p) db.ref('students').push({name:n, password:p}).then(() => loadAdminStudents());
+};
+
+function loadAdminStudents() {
+    db.ref('students').on('value', snap => {
+        let h = "<table>";
+        snap.forEach(c => { h += `<tr><td>${c.val().name}</td><td>${c.val().password}</td><td><button onclick="delS('${c.key}')" style="background:red;">Sil</button></td></tr>`; });
+        document.getElementById('adm-std-list').innerHTML = h + "</table>";
     });
 }
+window.delS = (id) => db.ref('students/'+id).remove();
 
-window.deleteRes = (id) => { if(confirm("Silinsin?")) db.ref('results/'+id).remove(); };
+window.openForm = () => {
+    qQs = [];
+    document.getElementById('adm-quiz-list').innerHTML = `
+        <input id="qt" placeholder="Sınaq Adı"><input id="tm" placeholder="Dəqiqə">
+        <div id="q-cont"></div>
+        <button onclick="addQF()">+ Sual</button><button onclick="saveQ()" style="background:green;">Yadda Saxla</button>
+    `;
+};
+
+window.addQF = () => {
+    const i = qQs.length + 1;
+    const d = document.createElement('div');
+    d.innerHTML = `<hr><b>Sual ${i}</b><input id="t${i}" placeholder="Mətn"><input id="p${i}" placeholder="Bal">
+    <input id="vA${i}" placeholder="A"><input id="vB${i}" placeholder="B"><input id="vC${i}" placeholder="C"><input id="vD${i}" placeholder="D">
+    <input id="c${i}" placeholder="Düzgün (A,B,C,D)">`;
+    document.getElementById('q-cont').appendChild(d);
+    qQs.push(i);
+};
+
+window.saveQ = () => {
+    let qs = [];
+    qQs.forEach(i => {
+        qs.push({
+            text: document.getElementById('t'+i).value,
+            point: document.getElementById('p'+i).value,
+            correct: document.getElementById('c'+i).value.toUpperCase(),
+            variants: { A: document.getElementById('vA'+i).value, B: document.getElementById('vB'+i).value, C: document.getElementById('vC'+i).value, D: document.getElementById('vD'+i).value }
+        });
+    });
+    db.ref('quizzes').push({ title: document.getElementById('qt').value, time: document.getElementById('tm').value, active: false, questions: qs }).then(() => loadAdminQuizzes());
+};
 
 function loadAdminQuizzes() {
     db.ref('quizzes').on('value', snap => {
         let h = "";
-        snap.forEach(c => {
-            const q = c.val();
-            h += `<div style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:8px;">
-                <b>${q.title}</b>
-                <div style="margin-top:10px;">
-                    <button onclick="toggleQuiz('${c.key}', ${q.active})" style="width:auto; background:${q.active?'#27ae60':'#7f8c8d'}">${q.active?'Aktiv':'Deaktiv'}</button>
-                    <button onclick="deleteQuiz('${c.key}')" style="width:auto; background:red;">Sil</button>
-                </div>
-            </div>`;
-        });
-        document.getElementById('adm-quiz-list').innerHTML = h || "Sınaq yoxdur.";
+        snap.forEach(c => { h += `<div style="border:1px solid #ccc; margin:10px; padding:10px;">${c.val().title} 
+        <button onclick="togQ('${c.key}',${c.val().active})">${c.val().active?'Deaktiv Et':'Aktiv Et'}</button>
+        <button onclick="delQ('${c.key}')" style="background:red;">Sil</button></div>`; });
+        document.getElementById('adm-quiz-list').innerHTML = h;
     });
 }
+window.togQ = (id, s) => db.ref('quizzes/'+id).update({active: !s});
+window.delQ = (id) => db.ref('quizzes/'+id).remove();
 
-window.toggleQuiz = (id, st) => db.ref('quizzes/'+id).update({ active: !st });
-window.deleteQuiz = (id) => { if(confirm("Sınaq silinsin?")) db.ref('quizzes/'+id).remove(); };
+function loadAdminResults() {
+    db.ref('results').on('value', snap => {
+        let h = "<table><tr><th>Şagird</th><th>Bal</th><th>Sil</th></tr>";
+        snap.forEach(c => { h += `<tr><td>${c.val().studentName}</td><td>${c.val().score}</td><td><button onclick="delR('${c.key}')" style="background:red;">Sil</button></td></tr>`; });
+        document.getElementById('adm-res-list').innerHTML = h + "</table>";
+    });
+}
+window.delR = (id) => db.ref('results/'+id).remove();
 
-window.addM = function() {
-    const t = document.getElementById('m-t').value;
-    const l = document.getElementById('m-l').value;
-    if(t && l) {
-        db.ref('materials').push({ title: t, link: l }).then(() => {
-            alert("Əlavə edildi!");
-            document.getElementById('m-t').value = "";
-            document.getElementById('m-l').value = "";
-        });
-    }
+window.addM = () => {
+    const t = document.getElementById('m-t').value, l = document.getElementById('m-l').value;
+    if(t && l) db.ref('materials').push({title:t, link:l});
 };
 
 function loadAdminMaterials() {
     db.ref('materials').on('value', snap => {
-        let h = "<table><tr><th>Başlıq</th><th>Sil</th></tr>";
-        snap.forEach(c => {
-            h += `<tr><td>${c.val().title}</td><td><button onclick="deleteMat('${c.key}')" style="background:red; width:auto;">Sil</button></td></tr>`;
-        });
+        let h = "<table>";
+        snap.forEach(c => { h += `<tr><td>${c.val().title}</td><td><button onclick="delM('${c.key}')" style="background:red;">Sil</button></td></tr>`; });
         document.getElementById('adm-mat-list').innerHTML = h + "</table>";
     });
 }
-
-window.deleteMat = (id) => db.ref('materials/'+id).remove();
-
-let quizQuestions = []; 
-
-window.openNewQuizForm = function() {
-    quizQuestions = []; 
-    const area = document.getElementById('adm-quiz-list'); 
-    
-    area.innerHTML = `
-        <div style="background:#f4f4f4; padding:20px; border-radius:10px; border:2px solid #1a4e8a;">
-            <h3>Yeni Sınaq Yarat</h3>
-            <input type="text" id="q-title" placeholder="Sınağın adı (məs: 9-cu sinif Kiçik Summativ)">
-            <input type="number" id="q-time" placeholder="Müddət (dəqiqə ilə)">
-            <hr>
-            <div id="questions-container"></div>
-            <button onclick="addNewQuestionField()" style="background:#3498db;">+ Sual Əlavə Et</button>
-            <button onclick="saveFullQuiz()" style="background:#27ae60; margin-top:20px;">Sınağı Bazaya Yüklə</button>
-            <button onclick="loadAdminQuizzes()" style="background:#7f8c8d;">Ləğv Et</button>
-        </div>
-    `;
-};
-
-window.addNewQuestionField = function() {
-    const qIndex = quizQuestions.length + 1;
-    const qDiv = document.createElement('div');
-    qDiv.className = 'question-box';
-    qDiv.style = "background:white; padding:15px; margin:10px 0; border-left:5px solid #1a4e8a; text-align:left;";
-    qDiv.innerHTML = `
-        <b>Sual ${qIndex}</b>
-        <input type="text" id="txt-${qIndex}" placeholder="Sualın mətni">
-        <input type="number" id="pnt-${qIndex}" placeholder="Bal (məs: 5)">
-        <input type="text" id="img-${qIndex}" placeholder="Şəkil URL (yoxdursa boş qoy)">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-            <input type="text" id="vA-${qIndex}" placeholder="A variantı">
-            <input type="text" id="vB-${qIndex}" placeholder="B variantı">
-            <input type="text" id="vC-${qIndex}" placeholder="C variantı">
-            <input type="text" id="vD-${qIndex}" placeholder="D variantı">
-        </div>
-        <input type="text" id="cor-${qIndex}" placeholder="Düzgün variant (Məs: A)" maxlength="1" style="border:2px solid #27ae60;">
-    `;
-    document.getElementById('questions-container').appendChild(qDiv);
-    quizQuestions.push(qIndex);
-};
-
-window.saveFullQuiz = function() {
-    const title = document.getElementById('q-title').value;
-    const time = document.getElementById('q-time').value;
-
-    if (!title || !time || quizQuestions.length === 0) {
-        alert("Sınaq adını, vaxtını və ən azı 1 sualı doldurun!");
-        return;
-    }
-
-    let finalQuestions = [];
-    
-    for (let i = 1; i <= quizQuestions.length; i++) {
-        const text = document.getElementById(`txt-${i}`).value;
-        const point = document.getElementById(`pnt-${i}`).value;
-        const correct = document.getElementById(`cor-${i}`).value.toUpperCase();
-        
-        if (!text || !correct) {
-            alert(i + "-ci sualın məlumatları tam deyil!");
-            return;
-        }
-
-        finalQuestions.push({
-            text: text,
-            point: point,
-            img: document.getElementById(`img-${i}`).value,
-            correct: correct,
-            variants: {
-                A: document.getElementById(`vA-${i}`).value,
-                B: document.getElementById(`vB-${i}`).value,
-                C: document.getElementById(`vC-${i}`).value,
-                D: document.getElementById(`vD-${i}`).value
-            }
-        });
-    }
-
-    const quizData = {
-        title: title,
-        time: time,
-        active: false, 
-        questions: finalQuestions
-    };
-
-    db.ref('quizzes').push(quizData).then(() => {
-        alert("Sınaq uğurla yaradıldı!");
-        loadAdminQuizzes();
-    }).catch(err => alert("Xəta baş verdi: " + err.message));
-};
+window.delM = (id) => db.ref('materials/'+id).remove();
