@@ -1,157 +1,103 @@
 :root {
-  --primary: #1a4e8a;
+  --primary: #1f3a5f;
+  --primary-dark: #162a44;
+  --accent: #c9a227; 
   --white: #ffffff;
-  --gray: #8492a6;
-  --bg: #f0f5fa;
-  --danger: #c0392b;
-  --success: #27ae60;
+  --bg: #eef2f7;
+  --text: #1c1c1c;
 }
 
 /* Body */
 body {
   margin: 0;
   font-family: "Segoe UI", sans-serif;
-  background: var(--bg);
+  background: linear-gradient(135deg, #e8edf5, #d9e2ec);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
 }
 
-/* Quiz Container */
+/* Container */
 #quiz-container {
   background: var(--white);
-  padding: 25px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 35px 30px;
+  border-radius: 18px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
   width: 95%;
   max-width: 480px;
   text-align: center;
-  border-top: 8px solid var(--primary);
+  border-top: 6px solid var(--accent);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Title */
+#quiz-container h1 {
+  margin-bottom: 25px;
+  font-size: 26px;
+  color: var(--primary);
+  line-height: 1.4;
 }
 
 /* Inputs */
 input,
 select {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 8px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 13px;
+  margin-bottom: 12px;
+  border: 1px solid #d6dbe3;
+  border-radius: 10px;
   box-sizing: border-box;
+  font-size: 14px;
+  transition: 0.2s;
 }
 
-/* Buttons */
+input:focus,
+select:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(31, 58, 95, 0.15);
+}
+
+/* Button */
 button {
   width: 100%;
-  padding: 12px;
+  padding: 13px;
   background: var(--primary);
   color: var(--white);
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s;
-  margin-bottom: 5px;
+  transition: all 0.2s ease;
+  font-size: 15px;
 }
 
-/* Admin Tabs */
-.admin-tabs {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 15px;
+button:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
-.admin-tabs button {
-  flex: 1;
-  padding: 10px 2px;
-  font-size: 12px;
+/* Footer text */
+.footer-text {
+  margin-top: 18px;
+  font-size: 14px;
+  color: #444;
 }
 
-/* Tab Content */
-.tab-content {
-  background: #f9fbfe;
-  padding: 15px;
-  border-radius: 10px;
-  text-align: left;
+.footer-text span {
+  color: var(--accent);
+  font-weight: 600;
 }
 
-/* Question Box */
-.question-box {
-  border: 1px solid #c8d6e5;
-  padding: 12px;
-  margin-top: 15px;
-  border-radius: 10px;
-  background: var(--white);
-}
-
-.question-box img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 10px 0;
-  border-radius: 8px;
-  min-height: 50px;
-  background-color: #f9f9f9;
-}
-
-/* Special Buttons */
-.variant-add-btn {
-  background: #54a0ff;
-  font-size: 12px;
-}
-
-.save-btn {
-  background: var(--success);
-  margin-top: 15px;
-}
-
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-box {
-  background: var(--white);
-  padding: 20px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 420px;
-  max-height: 80vh;
-  overflow-y: auto;
-  color: #333;
-}
-
-/* Table */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  font-size: 13px;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background: var(--primary);
-  color: var(--white);
-}
-
-/* Utility */
-.hidden {
-  display: none !important;
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
