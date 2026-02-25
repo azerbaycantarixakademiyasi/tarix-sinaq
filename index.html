@@ -3,36 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tarix Portalı</title>
+    <title>Nərminə Əmirbəyovanın Portalı</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-    <div class="card" id="login-screen">
-        <h1>Nərminə Əmirbəyovanın sınaq portalı</h1>
-        <input type="text" id="std-user" placeholder="İstifadəçi adı">
-        <input type="password" id="std-pass" placeholder="Parol">
-        <button onclick="login()">Giriş et</button>
-        <p style="font-size: 12px; margin-top: 20px;">Layihə rəhbəri: <b>Xədicə Abbaszadə</b></p>
-    </div>
-
-    <div class="card hidden" id="cabinet-screen">
-        <h2 id="user-name">Xoş gəldin!</h2>
-        <div class="cabinet-nav">
-            <button onclick="showTab('exams')">Sınaqlar</button>
-            <button onclick="showTab('library')">Kitabxana</button>
-            <button onclick="showTab('results')">Nəticələr</button>
-            <button onclick="location.reload()" style="background: #c0392b;">Çıxış</button>
+    <div class="container">
+        <div id="login-screen" class="card">
+            <h1>Nərminə Əmirbəyovanın sınaq portalı</h1>
+            <input type="text" id="std-user" placeholder="İstifadəçi adı">
+            <input type="password" id="std-pass" placeholder="Parol">
+            <button onclick="login()">Giriş et</button>
+            <p style="font-size: 12px; margin-top: 20px;">Layihə rəhbəri: <b>Xədicə Abbaszadə</b></p>
         </div>
-        <div id="exams" class="tab-content"><h3>Aktiv Sınaqlar</h3><div id="list-exams"></div></div>
-        <div id="library" class="tab-content hidden"><h3>Materiallar</h3><div id="list-mats"></div></div>
-        <div id="results" class="tab-content hidden"><h3>Ballarım</h3><div id="list-results"></div></div>
-         <p style="font-size: 12px; margin-top: 20px;">Layihə rəhbəri: <b>Xədicə Abbaszadə</b></p>
+
+        <div id="cabinet-screen" class="card hidden">
+            <h2 id="user-name-display">Xoş gəldiniz!</h2>
+            <div class="cabinet-nav">
+                <button onclick="showTab('exams')">Sınaqlar</button>
+                <button onclick="showTab('library')">Materiallar</button>
+                <button onclick="showTab('results')">Nəticələr</button>
+                <button onclick="logout()" style="background: #c0392b;">Çıxış</button>
+            </div>
+            <div id="exams" class="tab-content">
+                <div id="list-exams">Sınaqlar yüklənir...</div>
+            </div>
+            <div id="library" class="tab-content hidden">
+                <div id="list-mats"></div>
+            </div>
+            <div id="results" class="tab-content hidden">
+                <div id="list-results"></div>
+            </div>
+        </div>
+
+        <div id="quiz-screen" class="card hidden"></div>
     </div>
-
-    <div class="card hidden" id="quiz-screen"></div>
-
     <script src="student.js"></script>
 </body>
 </html>
