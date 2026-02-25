@@ -12,7 +12,6 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
 let timerInterval;
 
-// DİL LÜĞƏTİ
 const translations = {
     az: { welcome: "Nərminə Əmirbəyovanın sınaq portalı", login: "Giriş et", user: "İstifadəçi adı", pass: "Parol", start: "Sınağa Başla", logout: "Çıxış", timer: "Qalan vaxt", finish: "Bitir", score: "Topladığınız bal", date: "Bitmə vaxtı", select: "-- Sınaq seçin --" },
     ru: { welcome: "Тестовый портал Нармины Амирбековой", login: "Войти", user: "Имя пользователя", pass: "Пароль", start: "Начать тест", logout: "Выйти", timer: "Оставшееся время", finish: "Завершить", score: "Ваш балл", date: "Время окончания", select: "-- Выберите тест --" }
@@ -27,7 +26,6 @@ window.changeLang = (lang) => {
 };
 
 window.onload = () => {
-    // Dil tətbiqi
     if(document.querySelector('h1')) document.querySelector('h1').innerText = t.welcome;
     if(document.getElementById('student-username')) document.getElementById('student-username').placeholder = t.user;
     if(document.getElementById('student-pass')) document.getElementById('student-pass').placeholder = t.pass;
@@ -57,7 +55,7 @@ window.loginStudent = () => {
         let found = null;
         snap.forEach(c => { if(c.val().name === u && c.val().password === p) found = c.val(); });
         if(found) { localStorage.setItem('currentUser', JSON.stringify(found)); location.reload(); }
-        else alert(currentLang === 'az' ? "Səhv!" : "Ошибка!");
+        else alert(currentLang === 'az' ? "Məlumatlar səhvdir!" : "Неверные данные!");
     });
 };
 
@@ -66,12 +64,12 @@ window.startQuiz = () => {
     if (!quizId) return;
     database.ref('quizzes/' + quizId).once('value').then(snap => {
         const quiz = snap.val();
-        let quizHtml = `<h2>${quiz.title}</h2><div id="timer" style="color:red;font-weight:bold;">${t.timer}: ${quiz.time}:00</div><hr>`;
+        let quizHtml = `<h2>${quiz.title}</h2><div id="timer" style="color:red;font-weight:bold;margin-bottom:10px;">${t.timer}: ${quiz.time}:00</div><hr>`;
         quiz.questions.forEach((q, idx) => {
             quizHtml += `
-                <div class="question-box" style="text-align:left; border-bottom:1px solid #eee; padding-bottom:15px;">
+                <div class="question-box" style="text-align:left; border-bottom:1px solid #eee; padding-bottom:15px; margin-bottom:15px;">
                     <p><strong>${idx + 1}. ${q.text} (${q.point} bal)</strong></p>
-                    ${q.img ? `<img src="${q.img}" style="max-width:100%; border-radius:8px; margin:10px 0;">` : ''}
+                    ${q.img ? `<img src="${q.img}" style="max-width:100%; border-radius:8px; margin:10px 0; display:block;" onerror="this.style.display='none'">` : ''}
                     <div class="variants-list">
                         ${Object.entries(q.variants).map(([k, v]) => `
                             <label style="display:flex; align-items:center; gap:10px; margin:8px 0; cursor:pointer;">
@@ -81,7 +79,7 @@ window.startQuiz = () => {
                     </div>
                 </div>`;
         });
-        quizHtml += `<button onclick="finishQuiz('${quizId}')" style="background:#27ae60; margin-top:20px;">${t.finish}</button>`;
+        quizHtml += `<button onclick="finishQuiz('${quizId}')" style="background:#27ae60; margin-top:20px; width:100%;">${t.finish}</button>`;
         document.getElementById('quiz-selection-area').innerHTML = quizHtml;
         startTimer(quiz.time, quizId);
     });
@@ -112,18 +110,20 @@ window.finishQuiz = (qId) => {
             const isOk = ans === q.correct;
             const p = Number(q.point) || 0;
             maxTotal += p; if (isOk) studentTotal += p;
-            answers.push({ qText: q.text, studentAns: ans, correctAns: q.correct });
-
+            
             reportHtml += `
                 <div style="padding:15px; margin-bottom:10px; border-radius:10px; text-align:left; background:${isOk ? '#eaffea' : '#ffeaea'}; border:1px solid ${isOk ? '#27ae60' : '#c0392b'};">
                     <p><strong>${idx+1}. ${q.text}</strong></p>
-                    <p>${currentLang==='az'?'Sizin':'Ваш'}: ${ans} | ${currentLang==='az'?'Düz':'Правильно'}: ${q.correct}</p>
+                    <p style="font-size:14px;">${currentLang==='az'?'Sizin':'Ваш'}: <b>${ans}</b> | ${currentLang==='az'?'Düz':'Правильно'}: <b>${q.correct}</b> ${isOk?'✅':'❌'}</p>
                 </div>`;
         });
 
         const finishTime = new Date().toLocaleString('az-AZ');
         database.ref('results').push({ studentName: user.name, quizTitle: quiz.title, score: studentTotal, maxScore: maxTotal, date: finishTime }).then(() => {
-            document.getElementById('quiz-selection-area').innerHTML = `<h3>${t.score}: ${studentTotal} / ${maxTotal}</h3><p>${t.date}: ${finishTime}</p>` + reportHtml + `<button onclick="location.reload()">${t.logout}</button>`;
+            document.getElementById('quiz-selection-area').innerHTML = `
+                <h3 style="color:#1a4e8a;">${t.score}: ${studentTotal} / ${maxTotal}</h3>
+                <p style="font-size:13px; color:#666;">${t.date}: ${finishTime}</p>` + reportHtml + 
+                `<button onclick="location.reload()" style="background:#3498db; width:100%; margin-top:20px;">${t.logout}</button>`;
             window.scrollTo(0,0);
         });
     });
