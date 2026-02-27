@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nərminə Əmirbəyovanın Portalı</title>
+    <title>Nərminə Əmirbəyovanın Sınaq Portalı</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -11,29 +11,33 @@
 <body>
     <div class="container">
         <div id="login-screen" class="card">
-            <h1>Nərminə Əmirbəyovanın sınaq portalı</h1>
+            <h1>Nərminə Əmirbəyovanın Sınaq Portalı</h1>
             <input type="text" id="std-user" placeholder="İstifadəçi adı">
             <input type="password" id="std-pass" placeholder="Parol">
             <button onclick="login()">Giriş et</button>
-            <p style="font-size: 12px; margin-top: 20px;">Layihə rəhbəri: <b>Xədicə Abbaszadə</b></p>
         </div>
 
-        <div id="cabinet-screen" class="card hidden">
-            <h2 id="user-name-display">Xoş gəldiniz!</h2>
-            <div class="cabinet-nav">
-                <button onclick="showTab('exams')">Sınaqlar</button>
-                <button onclick="showTab('library')">Materiallar</button>
-                <button onclick="showTab('results')">Nəticələr</button>
-                <button onclick="logout()" style="background: #c0392b;">Çıxış</button>
+        <div id="cabinet-screen" class="hidden">
+            <div class="user-profile-bar">
+                <div>
+                    <b id="display-name">Yüklənir...</b><br>
+                    <small>Şifrə: <span id="display-pass">****</span></small>
+                </div>
+                <button onclick="logout()" style="width:auto; background:red; font-size:12px;">Çıxış</button>
             </div>
-            <div id="exams" class="tab-content">
-                <div id="list-exams">Sınaqlar yüklənir...</div>
+
+            <div id="main-dashboard" class="dashboard-grid">
+                <div class="menu-card" onclick="showTab('exams')"><span>📝</span><b>Sınaqlar</b></div>
+                <div class="menu-card" onclick="showTab('library')"><span>📚</span><b>Kitabxana</b></div>
+                <div class="menu-card" onclick="showTab('results')"><span>📊</span><b>Nəticələr</b></div>
+                <div class="menu-card" onclick="alert('Tezliklə...')"><span>🏆</span><b>Reytinq</b></div>
             </div>
-            <div id="library" class="tab-content hidden">
-                <div id="list-mats"></div>
-            </div>
-            <div id="results" class="tab-content hidden">
-                <div id="list-results"></div>
+
+            <div id="tab-container" class="card hidden">
+                <button class="back-btn" onclick="goBack()">⬅ Geri</button>
+                <div id="exams" class="tab-content hidden"><div id="list-exams"></div></div>
+                <div id="library" class="tab-content hidden"><div id="list-mats"></div></div>
+                <div id="results" class="tab-content hidden"><div id="list-results"></div></div>
             </div>
         </div>
 
