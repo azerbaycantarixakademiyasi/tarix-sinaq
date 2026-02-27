@@ -38,11 +38,15 @@
                     <div id="adm-quiz-list"></div>
                 </div>
                 <div id="res-sec" class="adm-content hidden"><div id="adm-res-list"></div></div>
-                <div id="mat-sec" class="adm-content hidden">
-                    <input id="m-t" placeholder="Başlıq"><input id="m-l" placeholder="Link">
-                    <button onclick="addM()">Yadda Saxla</button>
-                    <div id="adm-mat-list"></div>
-                </div>
+<div id="mat-sec" class="adm-content hidden">
+    <h3>Material Yüklə</h3>
+    <input id="m-t" placeholder="Materialın adı (məs: Səfəvilər PDF)">
+    <input type="file" id="m-file" accept="application/pdf" style="padding: 10px; background: #eee;">
+    <p style="font-size: 11px; color: gray;">Və ya link qoyun:</p>
+    <input id="m-l" placeholder="Google Drive və ya YouTube linki">
+    <button id="upload-btn" onclick="uploadMaterial()" style="background: #2980b9;">Yadda Saxla</button>
+    <div id="adm-mat-list"></div>
+</div>
             </div>
         </div>
     </div>
