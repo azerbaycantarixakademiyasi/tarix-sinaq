@@ -157,3 +157,14 @@ footer {
     margin: 20px 0;
     align-self: flex-start;
 }
+
+#admin-panel:not(.hidden) {
+    display: block !important;
+    width: 100%;
+    max-width: 800px; 
+    margin: 20px auto;
+}
+
+#admin-dashboard-grid:not(.hidden) {
+    display: grid !important;
+}
