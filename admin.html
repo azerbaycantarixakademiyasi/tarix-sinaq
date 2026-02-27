@@ -1,45 +1,50 @@
-<!DOCTYPE html>
-<html lang="az">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Panel</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-</head>
-<body>
-    <div class="container">
-        <div id="admin-login-screen" class="card">
-            <h2>Müəllim Girişi</h2>
-            <input type="password" id="adm-pass" placeholder="Şifrə">
-            <button onclick="admLogin()">Daxil Ol</button>
+<div class="container">
+    <div id="admin-login-screen" class="card">
+        <h2 style="color:#2c3e50">Müəllim Girişi</h2>
+        <input type="password" id="adm-pass" placeholder="Admin Şifrəsi">
+        <button onclick="admLogin()">Daxil Ol</button>
+    </div>
+
+    <div id="admin-panel" class="hidden">
+        <div class="user-profile-bar" style="background: #2c3e50;">
+            <div><b>Nərminə Əmirbəyova</b><br><small>Sistem İdarəçisi</small></div>
+            <button onclick="location.reload()" style="width:auto; background:red; margin:0;">Çıxış</button>
         </div>
 
-        <div id="admin-panel" class="card hidden">
-            <nav class="cabinet-nav">
-                <button onclick="admTab('std-sec')">Şagirdlər</button>
-                <button onclick="admTab('quiz-sec')">Sınaqlar</button>
-                <button onclick="admTab('res-sec')">Nəticələr</button>
-                <button onclick="admTab('mat-sec')">Materiallar</button>
-                <button onclick="location.reload()" style="background:red;">Çıxış</button>
-            </nav>
-            <div id="std-sec" class="adm-content">
-                <input id="n-s-n" placeholder="Ad Soyad"><input id="n-s-p" placeholder="Şifrə">
-                <button onclick="addS()">Əlavə Et</button>
+        <div id="admin-dashboard-grid" class="dashboard-grid">
+            <div class="menu-card" onclick="admTab('std-sec')"><span>👥</span><b>Şagirdlər</b></div>
+            <div class="menu-card" onclick="admTab('quiz-sec')"><span>📝</span><b>Sınaqlar</b></div>
+            <div id="res-card" class="menu-card" onclick="admTab('res-sec')"><span>📊</span><b>Nəticələr</b></div>
+            <div class="menu-card" onclick="admTab('mat-sec')"><span>📁</span><b>Materiallar</b></div>
+        </div>
+
+        <div id="adm-tab-container" class="card hidden" style="margin-top:20px;">
+            <button class="back-btn" onclick="admGoBack()">⬅ Geri qayıt</button>
+            
+            <div id="std-sec" class="adm-content hidden">
+                <h3>Şagird Əlavə Et</h3>
+                <input id="n-s-n" placeholder="Ad Soyad">
+                <input id="n-s-p" placeholder="Şifrə">
+                <button onclick="addS()" style="background:green;">Əlavə Et</button>
                 <div id="adm-std-list"></div>
             </div>
+
             <div id="quiz-sec" class="adm-content hidden">
-                <button onclick="openForm()" style="background:green;">+ Yeni Sınaq</button>
+                <button onclick="openNewQuizForm()" style="background:#27ae60; margin-bottom:15px;">+ Yeni DİM Sınağı Yarat</button>
                 <div id="adm-quiz-list"></div>
             </div>
-            <div id="res-sec" class="adm-content hidden"><div id="adm-res-list"></div></div>
+
+            <div id="res-sec" class="adm-content hidden">
+                <h3>Şagird Nəticələri</h3>
+                <div id="adm-res-list"></div>
+            </div>
+
             <div id="mat-sec" class="adm-content hidden">
-                <input id="m-t" placeholder="Başlıq"><input id="m-l" placeholder="Link">
+                <input id="m-t" placeholder="Material Başlığı">
+                <input id="m-l" placeholder="Link (Drive/YouTube)">
                 <button onclick="addM()">Yadda Saxla</button>
                 <div id="adm-mat-list"></div>
             </div>
         </div>
     </div>
-    <script src="admin.js"></script>
-</body>
-</html>
+</div>
