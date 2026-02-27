@@ -1,22 +1,70 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   background: #f0f2f5;
+  margin: 0;
   display: flex;
   justify-content: center;
-  padding-top: 50px;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
 }
 
 .card {
   background: white;
-  padding: 30px;
+  padding: 25px;
   border-radius: 15px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 500px;
   text-align: center;
-  position: relative;
 }
 
+.hidden {
+  display: none !important;
+}
+
+/* Dashboard Dizaynı */
+.user-profile-bar {
+  background: #1a4e8a;
+  color: white;
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.menu-card {
+  background: white;
+  padding: 30px 10px;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+  border-color: #1a4e8a;
+}
+
+.menu-card span {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+/* Giriş və Buttonlar */
 input {
   width: 100%;
   padding: 12px;
@@ -35,48 +83,35 @@ button {
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
-  margin-top: 10px;
 }
 
-button:hover {
-  background: #153d6d;
+.back-btn {
+  background: #6c757d;
+  margin-bottom: 15px;
+  width: auto;
+  padding: 8px 15px;
 }
 
-.hidden {
-  display: none !important; /* BU ÇOX VACİBDİR */
-}
-
-.cabinet-nav {
-  display: flex;
-  gap: 5px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.cabinet-nav button {
-  flex: 1;
-  font-size: 12px;
-  padding: 8px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-th,
-td {
-  border: 1px solid #eee;
-  padding: 10px;
-  text-align: left;
-}
-
+/* Sual qutuları */
 .question-box {
   text-align: left;
   background: #f9f9f9;
   padding: 15px;
   border-radius: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  border-left: 5px solid #1a4e8a;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  border: 1px solid #eee;
+  padding: 8px;
+  text-align: left;
+  font-size: 13px;
 }
