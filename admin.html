@@ -2,26 +2,34 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>Admin Panel</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 </head>
+
 <body>
     <div class="container">
         <div id="admin-login-screen" class="card">
             <h2>Müəllim Girişi</h2>
             <input type="password" id="adm-pass" placeholder="Şifrə">
-            <button onclick="admLogin()">Daxil Ol</button>
+            <button type="button" onclick="admLogin()">Daxil Ol</button>
+
             <footer style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px; font-size: 11px; color: #95a5a6;">
                 &copy; 2026 Tarix Sınaq Portalı | Layihə rəhbəri: <b>Xədicə Abbaszadə</b>
             </footer>
         </div>
-
         <div id="admin-panel" class="hidden">
+
             <div class="user-profile-bar" style="background:#2c3e50;">
-                <div><b>Admin Panel</b><br><small>Nərminə Əmirbəyova</small></div>
-                <button onclick="location.reload()" style="width:auto; background:red; margin:0;">Çıxış</button>
+                <div>
+                    <b>Admin Panel</b><br>
+                    <small>Nərminə Əmirbəyova</small>
+                </div>
+                <button onclick="location.reload()" style="width:auto; background:red; margin:0;">
+                    Çıxış
+                </button>
             </div>
             <div id="admin-dashboard-grid" class="dashboard-grid">
                 <div class="menu-card" onclick="admTab('std-sec')"><span>👥</span><b>Şagirdlər</b></div>
@@ -32,27 +40,39 @@
             <div id="adm-tab-container" class="card hidden">
                 <button class="back-btn" onclick="admGoBack()">⬅ Geri</button>
                 <div id="std-sec" class="adm-content hidden">
-                    <input id="n-s-n" placeholder="Ad Soyad"><input id="n-s-p" placeholder="Şifrə">
+                    <input id="n-s-n" placeholder="Ad Soyad">
+                    <input id="n-s-p" placeholder="Şifrə">
                     <button onclick="addS()" style="background:green;">Əlavə Et</button>
                     <div id="adm-std-list"></div>
                 </div>
                 <div id="quiz-sec" class="adm-content hidden">
-                    <button onclick="openNewQuizForm()" style="background:#27ae60;">+ Yeni DİM Sınağı</button>
+                    <button onclick="openNewQuizForm()" style="background:#27ae60;">
+                        + Yeni DİM Sınağı
+                    </button>
                     <div id="adm-quiz-list"></div>
                 </div>
-                <div id="res-sec" class="adm-content hidden"><div id="adm-res-list"></div></div>
-<div id="mat-sec" class="adm-content hidden">
-    <h3>Material Yüklə</h3>
-    <input id="m-t" placeholder="Materialın adı (məs: Səfəvilər PDF)">
-    <input type="file" id="m-file" accept="application/pdf" style="padding: 10px; background: #eee;">
-    <p style="font-size: 11px; color: gray;">Və ya link qoyun:</p>
-    <input id="m-l" placeholder="Google Drive və ya YouTube linki">
-    <button id="upload-btn" onclick="uploadMaterial()" style="background: #2980b9;">Yadda Saxla</button>
-    <div id="adm-mat-list"></div>
-</div>
+                <div id="res-sec" class="adm-content hidden">
+                    <div id="adm-res-list"></div>
+                </div>
+                <div id="mat-sec" class="adm-content hidden">
+                    <h3>Material Yüklə</h3>
+                    <input id="m-t" placeholder="Materialın adı (məs: Səfəvilər PDF)">
+                    <input type="file" id="m-file" accept="application/pdf" 
+                           style="padding: 10px; background: #eee;">
+                    <p style="font-size: 11px; color: gray;">
+                        Və ya link qoyun:
+                    </p>
+                    <input id="m-l" placeholder="Google Drive və ya YouTube linki">
+                    <button id="upload-btn" onclick="uploadMaterial()" 
+                            style="background: #2980b9;">
+                        Yadda Saxla
+                    </button>
+                    <div id="adm-mat-list"></div>
+                </div>
             </div>
         </div>
     </div>
+
     <script src="admin.js"></script>
 </body>
 </html>
