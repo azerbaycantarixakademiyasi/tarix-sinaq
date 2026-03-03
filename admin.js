@@ -1,4 +1,4 @@
-// 1. Firebase Konfiqurasiyası (Öz məlumatlarını bura daxil et)
+
 const firebaseConfig = {
     apiKey: "AIzaSyDulTEwR08ErC3J9uvjDHGJ1wxqTy91x1I",
     authDomain: "tarix-sinaq-db.firebaseapp.com",
@@ -13,10 +13,10 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const storage = firebase.storage();
 
-// 2. Admin Giriş
+
 window.admLogin = function() {
     const p = document.getElementById('adm-pass').value;
-    if (p === "12345") {
+    if (p === "nermine_2026") {
         document.getElementById('admin-login-screen').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
         document.body.classList.add('after-login');
@@ -25,7 +25,6 @@ window.admLogin = function() {
     }
 };
 
-// 3. Tablar arası keçid
 window.admTab = function(id) {
     document.getElementById('admin-dashboard-grid').classList.add('hidden');
     document.getElementById('adm-tab-container').classList.remove('hidden');
@@ -41,7 +40,6 @@ window.admGoBack = function() {
     document.getElementById('adm-tab-container').classList.add('hidden');
 };
 
-// 4. DİM Sınaq Yaradılması (Şəkil yükləmə xanası ilə)
 window.openNewQuizForm = function() {
     let h = `
         <div class="question-box" style="background:#fff; padding:20px; border-radius:10px;">
@@ -85,7 +83,6 @@ window.generateDIMFields = function() {
     document.getElementById('save-all-btn').style.display = "block";
 };
 
-// 5. ƏSAS HİSSƏ: Şəkilləri avtomatik Storage-ə, məlumatları Database-ə yükləyir
 window.saveDIMQuiz = async function() {
     const title = document.getElementById('q-title').value;
     const time = document.getElementById('q-time').value;
@@ -103,8 +100,6 @@ window.saveDIMQuiz = async function() {
             let fileInput = document.getElementById(`q-file-${i}`);
             let file = fileInput.files[0];
             let imgUrl = "";
-
-            // Əgər həmin sualda şəkil seçilibsə, onu Storage-ə atırıq
             if(file) {
                 const storageRef = storage.ref(`quiz_files/${Date.now()}_sual${i}`);
                 const snapshot = await storageRef.put(file);
@@ -113,7 +108,7 @@ window.saveDIMQuiz = async function() {
 
             let qData = {
                 text: document.getElementById(`q-txt-${i}`).value,
-                image: imgUrl, // Şəklin birbaşa Firebase-dən gələn linki
+                image: imgUrl,
                 correct: document.getElementById(`q-cor-${i}`).value.toUpperCase().trim()
             };
 
@@ -128,8 +123,6 @@ window.saveDIMQuiz = async function() {
             }
             questions.push(qData);
         }
-
-        // Bütün suallar və şəkil linkləri hazır olduqdan sonra Realtime Database-ə atırıq
         await db.ref('quizzes').push({
             title: title,
             time: time,
