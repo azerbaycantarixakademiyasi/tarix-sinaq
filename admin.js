@@ -11,16 +11,17 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const storage = firebase.storage();
-
 let currentEditingQuizId = null;
 
-window.admLogin = function() {
+
+window.admLogin = () => {
     if (document.getElementById('adm-pass').value === "12345") {
         document.getElementById('admin-login-screen').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
         document.body.classList.add('after-login');
     } else alert("Şifrə yanlışdır!");
 };
+
 
 window.admTab = (id) => {
     document.getElementById('admin-dashboard-grid').classList.add('hidden');
@@ -38,62 +39,55 @@ window.admGoBack = () => {
     currentEditingQuizId = null;
 };
 
-function renderQuizForm(existingData = null) {
-    let title = currentEditingQuizId ? "Sınağı Redaktə Et" : "Yeni Sınaq Yarat";
-    let h = `
-        <div class="card" style="max-width:900px; margin:auto; border:2px solid #3498db;">
-            <h3 style="color:#3498db; text-align:center;">${title}</h3>
-            <input id="q-title" placeholder="Sınağın adı" style="width:100%; margin-bottom:10px; padding:12px; font-size:16px;">
-            <input id="q-time" type="number" placeholder="Vaxt (dəqiqə)" style="width:100%; margin-bottom:15px; padding:12px;">
-            
-            <div id="dim-cont" style="max-height:600px; overflow-y:auto; border:1px solid #ddd; padding:20px; background:#fff; margin-bottom:15px; border-radius:10px;">
-                ${genDIMFieldsHTML(existingData)}
-            </div>
 
-            <button id="save-btn" onclick="saveFullQuiz()" style="background:#27ae60; width:100%; height:55px; font-size:20px; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">
+function renderQuizForm(existingData = null) {
+    let h = `
+        <div class="card">
+            <h3 style="text-align:center; color:#1a4e8a;">${currentEditingQuizId ? 'Sınağı Redaktə Et' : 'Yeni Sınaq Yarat'}</h3>
+            <input id="q-title" placeholder="Sınağın adı (Məs: Səfəvilər dövləti)">
+            <input id="q-time" type="number" placeholder="Vaxt (dəqiqə)">
+            <div id="dim-cont">${genFieldsHTML(existingData)}</div>
+            <button id="save-btn" onclick="saveFullQuiz()" style="background:#27ae60; color:white; width:100%; margin-top:20px;">
                 ${currentEditingQuizId ? '💾 DƏYİŞİKLİKLƏRİ YENİLƏ' : '🚀 SINAĞI BAZAYA YÜKLƏ'}
             </button>
-            <p id="upload-status" style="color:#e67e22; font-weight:bold; text-align:center; margin-top:15px; font-size:16px;"></p>
+            <p id="upload-status"></p>
         </div>`;
     document.getElementById('adm-quiz-list').innerHTML = h;
 }
 
-function genDIMFieldsHTML(existingData) {
+
+function genFieldsHTML(data) {
     let html = "";
     for(let i=1; i<=27; i++){
-        let q = existingData ? existingData[i-1] : { text: "", image: "", correct: "", variants: {A:"", B:"", C:"", D:"", E:""} };
+        let q = data ? data[i-1] : {text:"", image:"", correct:"", variants:{A:"",B:"",C:"",D:"",E:""}};
         html += `
-        <div style="margin-bottom:25px; border-left:5px solid #3498db; padding:15px; background:#f4f7f6; border-radius:5px;">
-            <b style="font-size:18px;">Sual ${i}</b>
-            <textarea id="q-t-${i}" style="width:100%; height:60px; margin:10px 0; padding:8px;">${q.text}</textarea>
-            
-            <div style="margin:10px 0; background:#fff; padding:10px; border:1px dashed #ccc;">
-                <label>Şəkil/Sxem yüklə:</label>
+        <div class="question-box">
+            <b>Sual ${i}</b>
+            <textarea id="q-t-${i}" placeholder="Sual mətni">${q.text}</textarea>
+            <div style="background:#f8f9fa; padding:10px; border:1px dashed #ccc; margin:10px 0;">
+                <label>Şəkil yüklə:</label>
                 <input type="file" id="q-f-${i}" accept="image/*">
-                ${q.image ? `<p style="color:green; font-size:12px;">Mövcud şəkil bazadadır.</p>` : ''}
                 <input type="hidden" id="q-img-old-${i}" value="${q.image || ''}">
+                ${q.image ? `<p style="font-size:11px; color:green;">Mövcud şəkil saxlanılır.</p>` : ''}
             </div>
-
-            ${i<=22 ? `
-            <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; margin-top:10px;">
-                ${['A','B','C','D','E'].map(v => `<input id="v${v}-${i}" placeholder="${v}" value="${q.variants ? q.variants[v] : ''}" style="padding:8px; border:1px solid #ccc;">`).join('')}
+            ${i<=22 ? `<div class="variants-grid">
+                ${['A','B','C','D','E'].map(v => `<input id="v${v}-${i}" placeholder="${v}" value="${q.variants ? q.variants[v] : ''}">`).join('')}
             </div>` : ""}
-            
-            <input id="q-c-${i}" placeholder="Düzgün cavab (Məs: A)" value="${q.correct}" style="width:100%; margin-top:10px; padding:10px; border:2px solid #27ae60; font-weight:bold;">
+            <input id="q-c-${i}" placeholder="Düzgün cavab (Məs: A)" value="${q.correct}" style="border-bottom:2px solid #27ae60;">
         </div>`;
     }
-
-    let sourceVal = (existingData && existingData[27]) ? existingData[27].source : "";
+    
+    let src = (data && data[27]) ? data[27].source : "";
     html += `
-    <div style="background:#fff3cd; padding:20px; border:2px solid #f1c40f; border-radius:10px;">
-        <h4 style="margin-top:0;">📖 MƏNBƏ MƏTNİ (Suallar 28-30)</h4>
-        <textarea id="source-text" style="width:100%; height:120px; padding:10px;">${sourceVal}</textarea>
+    <div class="source-section">
+        <h4>📖 Mənbə (28-30)</h4>
+        <textarea id="source-text" placeholder="Mənbə mətni bura yazılır...">${src}</textarea>
         ${[28,29,30].map(n => {
-            let q = existingData ? existingData[n-1] : { text: "", correct: "" };
+            let q = data ? data[n-1] : {text:"", correct:""};
             return `
-            <div style="margin-top:15px; border-top:1px solid #f39c12; padding-top:10px;">
-                <b>${n}. Sual:</b> <input id="q-t-${n}" style="width:70%; padding:8px;" value="${q.text}">
-                <b>Cavab:</b> <input id="q-c-${n}" style="width:15%; padding:8px;" value="${q.correct}">
+            <div style="margin-top:10px; display:flex; gap:10px;">
+                <b>${n}.</b> <input id="q-t-${n}" placeholder="Sual" value="${q.text}" style="width:70%"> 
+                <input id="q-c-${n}" placeholder="Cavab" value="${q.correct}" style="width:25%">
             </div>`;
         }).join('')}
     </div>`;
@@ -106,7 +100,7 @@ window.saveFullQuiz = async function() {
     const title = document.getElementById('q-title').value;
     const time = document.getElementById('q-time').value;
 
-    if(!title || !time) return alert("Başlıq və vaxt boş ola bilməz!");
+    if(!title || !time) return alert("Başlıq və vaxt mütləqdir!");
 
     btn.disabled = true;
     let qs = [];
@@ -115,9 +109,8 @@ window.saveFullQuiz = async function() {
     try {
         for(let i=1; i<=30; i++) {
             status.innerText = `Sual ${i} hazırlanır...`;
-            let file = document.getElementById(`q-f-${i}`) ? document.getElementById(`q-f-${i}`).files[0] : null;
-            let oldImg = document.getElementById(`q-img-old-${i}`) ? document.getElementById(`q-img-old-${i}`).value : "";
-            let imgUrl = oldImg;
+            let file = document.getElementById(`q-f-${i}`)?.files[0];
+            let imgUrl = document.getElementById(`q-img-old-${i}`).value;
 
             if(file) {
                 status.innerText = `Sual ${i}: Şəkil yüklənir...`;
@@ -126,30 +119,32 @@ window.saveFullQuiz = async function() {
                 imgUrl = await snap.ref.getDownloadURL();
             }
 
-            let d = {
-                text: document.getElementById(`q-t-${i}`).value,
-                image: imgUrl,
-                correct: document.getElementById(`q-c-${i}`).value.toUpperCase().trim()
+            let d = { 
+                text: document.getElementById(`q-t-${i}`).value, 
+                image: imgUrl, 
+                correct: document.getElementById(`q-c-${i}`).value.toUpperCase().trim() 
             };
-
+            
             if(i >= 28) d.source = sourceText;
             if(i <= 22) {
                 d.variants = { 
-                    A: document.getElementById(`vA-${i}`).value, B: document.getElementById(`vB-${i}`).value, 
-                    C: document.getElementById(`vC-${i}`).value, D: document.getElementById(`vD-${i}`).value,
+                    A: document.getElementById(`vA-${i}`).value, 
+                    B: document.getElementById(`vB-${i}`).value, 
+                    C: document.getElementById(`vC-${i}`).value, 
+                    D: document.getElementById(`vD-${i}`).value, 
                     E: document.getElementById(`vE-${i}`).value 
                 };
             }
             qs.push(d);
         }
 
-        status.innerText = "Yadda saxlanılır...";
+        status.innerText = "Bazaya yazılır...";
         if(currentEditingQuizId) {
             await db.ref('quizzes/' + currentEditingQuizId).update({ title, time, questions: qs });
-            alert("Sınaq uğurla YENİLƏNDİ!");
+            alert("Sınaq uğurla yeniləndi!");
         } else {
             await db.ref('quizzes').push({ title, time, active: false, questions: qs });
-            alert("Yeni sınaq uğurla YARADILDI!");
+            alert("Yeni sınaq yaradıldı!");
         }
         location.reload();
     } catch (err) {
@@ -159,17 +154,19 @@ window.saveFullQuiz = async function() {
     }
 };
 
+
 function loadAdminQuizzes() {
     db.ref('quizzes').on('value', snap => {
         let h = "";
         snap.forEach(c => {
             const q = c.val();
-            h += `<div class="quiz-item" style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid #eee; background:#fff; margin-bottom:5px;">
+            h += `
+            <div class="quiz-item" style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #ddd; background:white;">
                 <span><b>${q.title}</b> (${q.time} dəq)</span>
                 <div>
-                    <button onclick="togQ('${c.key}',${q.active})" style="background:${q.active?'green':'#7f8c8d'}; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer;">${q.active?'Aktiv':'Deaktiv'}</button>
-                    <button onclick="editQuiz('${c.key}')" style="background:#f39c12; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; margin-left:5px;">Düzəliş</button>
-                    <button onclick="delQ('${c.key}')" style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; margin-left:5px;">Sil</button>
+                    <button onclick="togQ('${c.key}',${q.active})" style="background:${q.active?'green':'gray'}; color:white; padding:5px 10px;">${q.active?'Aktiv':'Passiv'}</button>
+                    <button onclick="editQuiz('${c.key}')" style="background:orange; color:white; padding:5px 10px; margin-left:5px;">Düzəliş</button>
+                    <button onclick="delQ('${c.key}')" style="background:red; color:white; padding:5px 10px; margin-left:5px;">Sil</button>
                 </div>
             </div>`;
         });
@@ -206,8 +203,8 @@ window.delS = (id) => db.ref('students/'+id).remove();
 
 function loadAdminResults() {
     db.ref('results').on('value', snap => {
-        let h = "<table border='1' width='100%' style='border-collapse:collapse;'><tr><th>Şagird</th><th>Sınaq</th><th>Net Bal</th></tr>";
-        snap.forEach(c => { h += `<tr align='center'><td>${c.val().studentName}</td><td>${c.val().quizTitle}</td><td><b>${c.val().score}</b></td></tr>`; });
+        let h = "<table border='1' width='100%' style='border-collapse:collapse;'><tr><th>Şagird</th><th>Sınaq</th><th>Bal</th></tr>";
+        snap.forEach(c => { h += `<tr align='center'><td>${c.val().studentName}</td><td>${c.val().quizTitle}</td><td>${c.val().score}</td></tr>`; });
         document.getElementById('adm-res-list').innerHTML = h + "</table>";
     });
 }
