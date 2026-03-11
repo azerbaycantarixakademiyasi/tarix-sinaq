@@ -1,33 +1,33 @@
-* {
-    box-sizing: border-box;
-}
-
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f2f5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-body.after-login {
-    display: block !important;
-    padding: 20px 0;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  transition: 0.3s;
 }
 
-.admin-header, .user-profile-bar {
-    background: #1a4e8a !important;
-    color: white !important;
-    padding: 15px 25px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 10px auto;
-    width: 95%;
-    max-width: 1200px;
+/* Daxil olandan sonra mərkəzləməni ləğv etmək üçün klas */
+body.after-login {
+  display: block !important;
+  min-height: auto !important;
+  padding: 20px 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  box-sizing: border-box;
+  margin: auto;
+}
+
+#admin-panel:not(.hidden),
+#cabinet-screen:not(.hidden) {
+  max-width: 800px;
 }
 
 .card {
@@ -36,73 +36,93 @@ body.after-login {
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     width: 95%;
-    max-width: 1500px; /* Genişlik  */
+    max-width: 1200px; /* Genişlik */
     margin: 20px auto;
     text-align: center;
 }
 
-#dim-cont {
-    max-height: 650px;
-    overflow-y: auto;
-    margin: 20px 0;
-    padding: 15px;
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
 }
 
-.question-box {
-    text-align: left;
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    border-left: 6px solid #1a4e8a;
+.menu-card {
+  background: white;
+  padding: 25px 10px;
+  border-radius: 15px;
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-input, textarea {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 10px;
+.menu-card:hover {
+  transform: translateY(-5px);
+  border-color: #1a4e8a;
+}
+
+.user-profile-bar {
+  background: #1a4e8a;
+  color: white;
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-sizing: border-box;
 }
 
 button {
-    cursor: pointer;
-    border: none;
-    border-radius: 10px;
-    padding: 12px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-#save-btn, .btn-success {
-    background: #27ae60 !important;
-    color: white;
-}
-
-.btn-primary, button[onclick*="admGoBack"] {
-    background: #1a4e8a !important;
-    color: white;
-}
-
-.btn-danger {
-    background: #e74c3c !important;
-    color: white;
-}
-
-.source-section {
-    background: #fff3cd !important;
-    border: 1px solid #ffeeba !important;
-    padding: 20px;
-    border-radius: 15px;
-    color: #856404;
-    text-align: left;
+  width: 100%;
+  padding: 12px;
+  background: #1a4e8a;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .hidden {
-    display: none !important;
+  display: none !important;
 }
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-thumb { background: #1a4e8a; border-radius: 10px; }
+
+.question-box {
+  text-align: left;
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  border-left: 5px solid #1a4e8a;
+}
+
+#timer-box {
+  position: sticky;
+  top: 10px;
+  background: #e74c3c;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  z-index: 100;
+  font-weight: bold;
+}
+
+footer {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #95a5a6;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
