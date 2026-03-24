@@ -1,4 +1,3 @@
-// Firebase Konfiqurasiyası
 const firebaseConfig = {
     apiKey: "AIzaSyDulTEwR08ErC3J9uvjDHGJ1wxqTy91x1I",
     authDomain: "tarix-sinaq-db.firebaseapp.com",
@@ -13,7 +12,6 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 let examTimer; 
 
-// Şagird Girişi
 window.login = function() {
     const u = document.getElementById('std-user').value.trim();
     const p = document.getElementById('std-pass').value.trim();
@@ -35,7 +33,6 @@ window.login = function() {
     });
 };
 
-// Menyu Naviqasiyası 
 window.showTab = function(id) {
     document.getElementById('main-dashboard').classList.add('hidden');
     document.getElementById('tab-container').classList.remove('hidden');
@@ -52,7 +49,6 @@ window.goBack = () => {
     document.getElementById('tab-container').classList.add('hidden');
 };
 
-// Sınaqların Yüklənməsi
 function loadExams() {
     db.ref('quizzes').on('value', snap => {
         let h = "";
@@ -106,7 +102,6 @@ window.startQuiz = function(id) {
     });
 };
 
-// 4 Səhv 1 Düz Hesablaması
 window.finishQuiz = function(id, auto = false) {
     if(!auto && !confirm("İmtahanı bitirmək istəyirsiniz?")) return;
     clearInterval(examTimer);
@@ -146,7 +141,6 @@ window.finishQuiz = function(id, auto = false) {
     });
 };
 
-// Kitabxana (PDF Endirmə)
 function loadMats() {
     db.ref('materials').on('value', snap => {
         let h = "<h3>Tədris Materialları</h3>";
@@ -161,7 +155,6 @@ function loadMats() {
     });
 }
 
-// Nəticələrin Görünməsi
 function loadRes() {
     const user = JSON.parse(localStorage.getItem('student'));
     db.ref('results').on('value', snap => {
