@@ -10,26 +10,22 @@ const firebaseConfig = {
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-let examTimer; 
+let examInterval; 
 
 window.login = function() {
     const u = document.getElementById('std-user').value.trim();
     const p = document.getElementById('std-pass').value.trim();
     
-    db.ref('students').once('value', snap => {
+    if(!u || !p) return alert("Bütün xanaları doldurun!");
+
+    db.ref('students').orderByChild('name').equalTo(u).once('value', snap => {
         let user = null;
-        snap.forEach(c => { if(c.val().name === u && c.val().password === p) user = c.val(); });
+        snap.forEach(c => { if(c.val().password === p) user = c.val(); });
         
         if(user) {
             localStorage.setItem('student', JSON.stringify(user));
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('cabinet-screen').classList.remove('hidden');
-            document.getElementById('display-name').innerText = user.name;
-            document.getElementById('display-pass').innerText = user.password;
-            goBack();
-        } else {
-            alert("İstifadəçi adı və ya şifrə yanlışdır!");
-        }
+            location.reload(); 
+        } else alert("İstifadəçi adı və ya şifrə yanlışdır!");
     });
 };
 
@@ -53,105 +49,127 @@ function loadExams() {
     db.ref('quizzes').on('value', snap => {
         let h = "";
         snap.forEach(c => {
-            if(c.val().active) {
-                h += `<div class="question-box" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="startQuiz('${c.key}')">
-                    <span><b>${c.val().title}</b> (${c.val().time} dəq)</span>
-                    <button style="width:70px; margin:0; padding:5px;">Başla</button>
+            const q = c.val();
+            if(q.active) {
+                h += `
+                <div class="question-box" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="startQuiz('${c.key}')">
+                    <span><b>${q.title}</b> (${q.time} dəq)</span>
+                    <button style="width:100px; margin:0; padding:8px;">Başla 🚀</button>
                 </div>`;
             }
         });
-        document.getElementById('list-exams').innerHTML = h || "Hazırda aktiv sınaq yoxdur.";
+        document.getElementById('list-exams').innerHTML = h || "<p>Hazırda aktiv sınaq yoxdur.</p>";
     });
 }
-
 window.startQuiz = function(id) {
     db.ref('quizzes/'+id).once('value', snap => {
         const q = snap.val();
-        let timeLeft = (q.time || 90) * 60; 
         
-        document.getElementById('cabinet-screen').classList.add('hidden');
-        const s = document.getElementById('quiz-screen');
-        s.classList.remove('hidden');
+        const endTime = Date.now() + (q.time * 60 * 1000);
+        localStorage.setItem('currentExamEnd', endTime);
+        localStorage.setItem('currentExamId', id);
 
-        let html = `
-            <div id="timer-box">Qalan vaxt: <span id="clock">--:--</span></div>
-            <h2 style="color:#1a4e8a">${q.title}</h2><hr>`;
-
-        q.questions.forEach((qs, i) => {
-            html += `<div class="question-box">
-                <p><b>${i+1}. ${qs.text}</b></p>
-                ${qs.variants ? Object.entries(qs.variants).map(([k,v]) => 
-                    `<label style="display:block; margin:5px 0;"><input type="radio" name="q${i}" value="${k}"> ${k}) ${v}</label>`).join('') : 
-                    `<input type="text" id="ans${i}" placeholder="Cavabı yazın..." style="width:90%;">`}
-            </div>`;
-        });
-        
-        html += `<button onclick="finishQuiz('${id}')" style="background:#27ae60; margin-top:20px;">İmtahanı Bitir</button>`;
-        s.innerHTML = html;
-        examTimer = setInterval(() => {
-            let m = Math.floor(timeLeft / 60);
-            let sc = timeLeft % 60;
-            document.getElementById('clock').innerText = `${m}:${sc < 10 ? '0' : ''}${sc}`;
-            if (timeLeft-- <= 0) {
-                clearInterval(examTimer);
-                alert("Vaxt bitdi!");
-                finishQuiz(id, true);
-            }
-        }, 1000);
-        window.scrollTo(0,0);
+        renderQuizInterface(q, id);
     });
 };
 
+function renderQuizInterface(q, id) {
+    document.getElementById('cabinet-screen').classList.add('hidden');
+    const s = document.getElementById('quiz-screen');
+    s.classList.remove('hidden');
+    window.scrollTo(0,0);
+
+    let html = `<div id="timer-box">⏳ <span id="clock">--:--</span></div>
+                <h2 style="color:#1a4e8a; text-align:center;">${q.title}</h2><hr>`;
+
+    q.questions.forEach((qs, i) => {
+        html += `
+        <div class="question-box">
+            <p><b>${i+1}. ${qs.text}</b></p>
+            ${qs.image ? `<img src="${qs.image}" style="max-width:100%; border-radius:10px; margin:10px 0;">` : ''}
+            <div class="options">
+                ${qs.variants ? Object.entries(qs.variants).map(([k,v]) => 
+                    `<label style="display:block; padding:8px; cursor:pointer;">
+                        <input type="radio" name="q${i}" value="${k}"> <b>${k})</b> ${v}
+                    </label>`).join('') : 
+                    `<input type="text" id="ans${i}" placeholder="Cavabınızı yazın..." style="width:100%; border-bottom:2px solid #1a4e8a;">`}
+            </div>
+        </div>`;
+    });
+
+    html += `<button onclick="finishQuiz('${id}')" style="background:#27ae60; margin:30px 0;">İmtahanı Bitir ✅</button>`;
+    s.innerHTML = html;
+    if(examInterval) clearInterval(examInterval);
+    examInterval = setInterval(() => {
+        const now = Date.now();
+        const diff = localStorage.getItem('currentExamEnd') - now;
+
+        if (diff <= 0) {
+            clearInterval(examInterval);
+            finishQuiz(id, true);
+        } else {
+            let m = Math.floor(diff / 60000);
+            let sc = Math.floor((diff % 60000) / 1000);
+            document.getElementById('clock').innerText = `${m}:${sc < 10 ? '0' : ''}${sc}`;
+        }
+    }, 1000);
+}
+
 window.finishQuiz = function(id, auto = false) {
-    if(!auto && !confirm("İmtahanı bitirmək istəyirsiniz?")) return;
-    clearInterval(examTimer);
+    if(!auto && !confirm("İmtahanı bitirmək istədiyinizdən əminsiniz?")) return;
+    
+    clearInterval(examInterval);
+    localStorage.removeItem('currentExamEnd');
+    localStorage.removeItem('currentExamId');
 
     db.ref('quizzes/'+id).once('value', snap => {
         const q = snap.val();
-        let correctCount = 0;
-        let wrongCount = 0;
+        let correct = 0, wrong = 0;
 
         q.questions.forEach((qs, i) => {
             const sel = document.querySelector(`input[name="q${i}"]:checked`);
             const txt = document.getElementById(`ans${i}`);
             let uAns = sel ? sel.value : (txt ? txt.value.toUpperCase().trim() : "");
 
-            if (uAns !== "") {
+            if(uAns !== "") {
                 if (uAns == qs.correct) {
-                    correctCount++;
+                    correct++;
                 } else {
-                    if (i < 22) wrongCount++; 
+                    if (i < 22) wrong++; 
                 }
             }
         });
-        let net = correctCount - (wrongCount / 4);
-        let finalScore = (net * (100 / q.questions.length)).toFixed(2);
-        if (finalScore < 0) finalScore = 0;
+
+        const netScore = correct - (wrong / 4);
+        let finalPercent = (netScore * (100 / q.questions.length)).toFixed(2);
+        if (finalPercent < 0) finalPercent = 0;
 
         const user = JSON.parse(localStorage.getItem('student'));
         db.ref('results').push({
             studentName: user.name,
             quizTitle: q.title,
-            score: finalScore,
+            score: finalPercent,
+            details: `${correct} Düz, ${wrong} Səhv`,
             date: new Date().toLocaleString()
         }).then(() => {
-            alert("İmtahan bitdi! Balınız: " + finalScore);
+            alert(`İmtahan bitdi!\nNəticə: ${finalPercent} bal\n(${correct} Düz, ${wrong} Səhv)`);
             location.reload();
         });
     });
 };
 
+// 6. MATERİALLAR VƏ NƏTİCƏLƏR
 function loadMats() {
     db.ref('materials').on('value', snap => {
-        let h = "<h3>Tədris Materialları</h3>";
+        let h = "<h3>Kitabxana</h3>";
         snap.forEach(c => {
             const m = c.val();
             h += `<div class="question-box" style="display:flex; justify-content:space-between; align-items:center;">
-                <span><b>${m.title}</b></span>
-                <a href="${m.link}" target="_blank" download style="background:#1a4e8a; color:white; padding:5px 15px; border-radius:5px; text-decoration:none; font-size:12px;">Endir / Bax</a>
-            </div>`;
+                    <span><b>${m.title}</b></span>
+                    <a href="${m.link}" target="_blank" class="download-btn" style="background: #1a4e8a; color: white; padding: 8px 15px; border-radius: 8px; text-decoration: none;">Bax / Endir</a>
+                  </div>`;
         });
-        document.getElementById('list-mats').innerHTML = h || "Material yoxdur.";
+        document.getElementById('list-mats').innerHTML = h || "<p>Material yoxdur.</p>";
     });
 }
 
@@ -167,8 +185,16 @@ function loadRes() {
                 count++;
             }
         });
-        document.getElementById('list-results').innerHTML = count > 0 ? h + "</table>" : "Hələ nəticəniz yoxdur.";
+        document.getElementById('list-results').innerHTML = count > 0 ? h + "</table>" : "<p>Hələ nəticəniz yoxdur.</p>";
     });
 }
 
-window.logout = () => { localStorage.removeItem('student'); location.reload(); };
+window.logout = () => { localStorage.clear(); location.reload(); };
+
+window.onload = () => {
+    const ongoingId = localStorage.getItem('currentExamId');
+    const endTime = localStorage.getItem('currentExamEnd');
+    if(ongoingId && endTime > Date.now()) {
+        startQuiz(ongoingId);
+    }
+};
